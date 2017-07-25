@@ -26,8 +26,6 @@ sites
 *.a
 *.lib
 
-.project
-.cproject
 .settings*
 
 # Executables
