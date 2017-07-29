@@ -29,11 +29,8 @@ void printObstaclePostion(Pose pose, float beta, float dDistanceRobObs)
 {
 	float xRob = pose.getX(), yRob = pose.getY(), alpha = pose.getHeading();
 	float sumAlphaBeta = degreesToRadians(alpha) + degreesToRadians(beta);
-//	float xObs = xRob + dDistanceRobObs * cos(sumAlphaBeta);
-//	float yObs = yRob + dDistanceRobObs * sin(sumAlphaBeta);
-
-	float xObs = xRob + dDistanceRobObs * cos(degreesToRadians(alpha) - degreesToRadians(beta) + degreesToRadians(180));
-	float yObs = yRob + dDistanceRobObs * sin(degreesToRadians(alpha) - degreesToRadians(beta) + degreesToRadians(180));
+	float xObs = xRob + dDistanceRobObs * cos(sumAlphaBeta);
+	float yObs = yRob + dDistanceRobObs * sin(sumAlphaBeta);
 
 	cout << "xObs is : " << xObs << " yObs is : " << yObs << endl;
 }
