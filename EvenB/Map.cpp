@@ -14,29 +14,39 @@ Map::Map(OccupancyGrid &grid) : grid(grid) {
 
 void Map::initMap() {
 	mat = cv::Mat(grid.getHeight(), grid.getWidth(), CV_8UC3);
-	for (uint32_t i = 0; i < grid.getHeight(); i++) {
-		for (uint32_t j = 0; j < grid.getWidth(); j++) {
+	for (uint32_t i = 0; i < grid.getHeight(); i++)
+	{
+		for (uint32_t j = 0; j < grid.getWidth(); j++)
+		{
 			initCell(i, j);
 		}
 	}
 }
 
+void Map::paintCell(uint32_t row, uint32_t col, int color) {
+	mat.at<cv::Vec3b>(row, col)[0] = color;
+	mat.at<cv::Vec3b>(row, col)[1] = color;
+	mat.at<cv::Vec3b>(row, col)[2] = color;
+}
+
 void Map::initCell(int i, int j) {
 	Cell c = grid.getCell(i, j);
 	if (c == CELL_FREE) {
-		mat.at<cv::Vec3b>(i, j)[0] = 255;
-		mat.at<cv::Vec3b>(i, j)[1] = 255;
-		mat.at<cv::Vec3b>(i, j)[2] = 255;
+		paintCell(i, j, 255);
 	}
 	else if (c == CELL_OCCUPIED) {
-		mat.at<cv::Vec3b>(i, j)[0] = 0;
-		mat.at<cv::Vec3b>(i, j)[1] = 0;
-		mat.at<cv::Vec3b>(i, j)[2] = 0;
+		double gridResolution = grid.getResolution(); // 0.05
+		double wall = 0.3 / gridResolution / 2; // 3
+		for (uint32_t row = i - wall; row < i + wall; ++row)
+		{
+				for (uint32_t col = j - wall; col < j + wall; ++col)
+				{
+					paintCell(row, col, 0);
+				}
+		}
 	}
 	else { // Unknown
-		mat.at<cv::Vec3b>(i, j)[0] = 128;
-		mat.at<cv::Vec3b>(i, j)[1] = 128;
-		mat.at<cv::Vec3b>(i, j)[2] = 128;
+		paintCell(i, j, 128);
 	}
 }
 

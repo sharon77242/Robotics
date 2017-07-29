@@ -17,6 +17,7 @@ private:
 	cv::Mat mat;
 	void initMap();
 	void initCell(int i, int j);
+	void paintCell(uint32_t row, uint32_t col, int color);
 
 public:
 	Map(OccupancyGrid &grid);

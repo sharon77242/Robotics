@@ -24,6 +24,9 @@ int main() {
 		map.show();
 		sleep(0.5);
 	}
+
+	delete hamster;
+
 	return 0;
 }
 
