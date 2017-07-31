@@ -40,7 +40,7 @@ struct NodeCostComparator {
 	}
 };
 
-/*vector<Node *> PathPlanner::getSuccessors(Node *node) const {
+vector<Node *> PathPlanner::getSuccessors(Node *node) const {
 	int row = node->row;
 	int col = node->col;
 
@@ -51,24 +51,22 @@ struct NodeCostComparator {
 	}
 	// TODO - Add the other neighbors
 	return successors;
-}*/
+}
 
 Path PathPlanner::computeShortestPath() {
 	buildGraph();
-	Path path;
 
 	priority_queue<Node *, vector<Node *>, NodeCostComparator> openList;
 	Node *startNode = mat[startRow][startCol];
 	openList.push(startNode);
 
 	while (!openList.empty()) {
-		Node *currNode = openList.top();
-		openList.pop();
-		//vector<Node *> successors = getSuccessors(currNode);
+		Node *currNode = openList.pop();
+		vector<Node *> successors = getSuccessors(currNode);
 	}
 
 
-	return path;
+
 
 }
 

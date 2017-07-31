@@ -14,18 +14,15 @@ using namespace HamsterAPI;
 class Map {
 private:
 	OccupancyGrid& grid;
-	OccupancyGrid *coarseGrid;
-
+	const Pose& startPos;
+	const Pose& endPos;
 	cv::Mat mat;
-	int robotSizeInPixels;
-
-	void initMat(OccupancyGrid &grid);
-	void initCell(OccupancyGrid &grid, int i, int j);
-	void convertToCoarseGrid();
+	void initMap();
+	void initCell(int i, int j);
 
 public:
-	Map(OccupancyGrid &grid, double robotSize);
-	void show();
+	Map(OccupancyGrid &grid, const Pose& startPos, const Pose& endPos);
+	void show() const;
 	virtual ~Map();
 };
 

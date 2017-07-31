@@ -24,7 +24,7 @@ private:
 	vector<vector<Node *> > mat;
 
 	void buildGraph();
-	//vector<Node *> PathPlanner::getSuccessors(Node *node) const;
+	vector<Node *> PathPlanner::getSuccessors(Node *node) const;
 public:
 	PathPlanner(OccupancyGrid &grid, int startRow, int startCol);
 	Path computeShortestPath();
