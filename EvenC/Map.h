@@ -19,6 +19,10 @@ private:
 	cv::Mat mat;
 	void initMap();
 	void initCell(int i, int j);
+	void paintCell(int row, int col, int firstColor, int secondColor, int thirdColor);
+	void paintWithAWall(int i, int j);
+
+
 
 public:
 	Map(OccupancyGrid &grid, const Pose& startPos, const Pose& endPos);

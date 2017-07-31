@@ -24,36 +24,46 @@ void Map::initMap() {
 	}
 }
 
+void Map::paintCell(int row, int col, int firstColor, int secondColor, int thirdColor)
+{
+	if (row < 0 || col < 0 || row > grid.getHeight() || col > grid.getWidth())
+		return;
+
+	mat.at<cv::Vec3b>(row, col)[0] = firstColor;
+	mat.at<cv::Vec3b>(row, col)[1] = secondColor;
+	mat.at<cv::Vec3b>(row, col)[2] = thirdColor;
+}
+
+void Map::paintWithAWall(int i, int j) {
+	double gridResolution = grid.getResolution(); // 0.05
+	double wall = 0.3 / gridResolution / 2; // 3
+	for (int row = i - wall; row < i + wall; ++row) {
+		for (int col = j - wall; col < j + wall; ++col) {
+			paintCell(i, j, 0, 0, 0);
+		}
+	}
+}
+
 void Map::initCell(int i, int j) {
 	Cell c = grid.getCell(i, j);
 	if(i == startPos.getY() && j == startPos.getX())
 	{
-		std::cout << "printing blue" << std::endl;
-		mat.at<cv::Vec3b>(i, j)[0] = 0;
-		mat.at<cv::Vec3b>(i, j)[1] = 0;
-		mat.at<cv::Vec3b>(i, j)[2] = 255;
+		paintCell(i, j, 0, 0, 255);
+		std::cout << "painting blue" << std::endl;
 	}
 	else if(i == endPos.getY() && j == endPos.getX())
 	{
+		paintCell(i, j, 0, 100, 0);
 		std::cout << "printing green" << std::endl;
-		mat.at<cv::Vec3b>(i, j)[0] = 0;
-		mat.at<cv::Vec3b>(i, j)[1] = 100;
-		mat.at<cv::Vec3b>(i, j)[2] = 0;
 	}
 	else if (c == CELL_FREE) {
-		mat.at<cv::Vec3b>(i, j)[0] = 255;
-		mat.at<cv::Vec3b>(i, j)[1] = 255;
-		mat.at<cv::Vec3b>(i, j)[2] = 255;
+		paintCell(i, j, 255, 255, 255);
 	}
 	else if (c == CELL_OCCUPIED) {
-		mat.at<cv::Vec3b>(i, j)[0] = 0;
-		mat.at<cv::Vec3b>(i, j)[1] = 0;
-		mat.at<cv::Vec3b>(i, j)[2] = 0;
+		paintWithAWall(i, j);
 	}
 	else { // Unknown
-		mat.at<cv::Vec3b>(i, j)[0] = 128;
-		mat.at<cv::Vec3b>(i, j)[1] = 128;
-		mat.at<cv::Vec3b>(i, j)[2] = 128;
+		paintCell(i, j, 128, 128, 128);
 	}
 }
 
