@@ -6,17 +6,20 @@
 CPP_SRCS += \
 ../Map.cpp \
 ../PathPlanner.cpp \
-../main.cpp 
+../main.cpp \
+../use_this_for_path_planning_algorithm_sharone.cpp 
 
 OBJS += \
 ./Map.o \
 ./PathPlanner.o \
-./main.o 
+./main.o \
+./use_this_for_path_planning_algorithm_sharone.o 
 
 CPP_DEPS += \
 ./Map.d \
 ./PathPlanner.d \
-./main.d 
+./main.d \
+./use_this_for_path_planning_algorithm_sharone.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
