@@ -7,19 +7,21 @@
 
 #include "Map.h"
 
-Map::Map(OccupancyGrid &grid, const Pose& startPos, const Pose& endPos)
+Map::Map(OccupancyGrid &grid, const Pose& startPos, const Pose& endPos, double robotSize)
 : grid(grid)
 , startPos(startPos)
 , endPos(endPos){
-	cv::namedWindow("map");
-	initMap();
+	cv::namedWindow("map", cv::WINDOW_NORMAL);
+	robotSizeInPixels = robotSize / grid.getResolution();
+	convertToCoarseGrid();
+	initMap(*coarseGrid);
 }
 
-void Map::initMap() {
+void Map::initMap(OccupancyGrid &grid) {
 	mat = cv::Mat(grid.getHeight(), grid.getWidth(), CV_8UC3);
 	for (int i = 0; i < grid.getHeight(); i++) {
 		for (int j = 0; j < grid.getWidth(); j++) {
-			initCell(i, j);
+			initCell(grid,i, j);
 		}
 	}
 }
@@ -44,7 +46,7 @@ void Map::paintWithAWall(int i, int j) {
 	}
 }
 
-void Map::initCell(int i, int j) {
+void Map::initCell(OccupancyGrid &grid,int i, int j) {
 	Cell c = grid.getCell(i, j);
 	if(i == startPos.getY() && j == startPos.getX())
 	{
@@ -64,6 +66,34 @@ void Map::initCell(int i, int j) {
 	}
 	else { // Unknown
 		paintCell(i, j, 128, 128, 128);
+	}
+}
+
+void Map::convertToCoarseGrid() {
+	int rows = grid.getHeight() / robotSizeInPixels;
+	int cols = grid.getWidth() / robotSizeInPixels;
+	double resolution = grid.getResolution() * robotSizeInPixels;
+
+	coarseGrid = new OccupancyGrid(rows, cols, resolution);
+	for (int i  = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			int row = i * robotSizeInPixels;
+			int col = j * robotSizeInPixels;
+
+			bool isOccupied = false;
+			for (int k = row; k < row + robotSizeInPixels && !isOccupied; k++) {
+				for (int m = col; m < col + robotSizeInPixels; m++) {
+					if (grid.getCell(k, m) != CELL_FREE) {
+						isOccupied = true;
+						break;
+					}
+				}
+			}
+			if (isOccupied)
+				coarseGrid->setCell(i, j, CELL_OCCUPIED);
+			else
+				coarseGrid->setCell(i, j, CELL_FREE);
+		}
 	}
 }
 

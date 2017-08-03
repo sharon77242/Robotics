@@ -8,10 +8,16 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-struct Node {
+class Node {
+public :
 	int row, col;
 	float f, g, h;
 	Node *parent;
+
+    inline bool operator == (const Node &b) const
+    {
+        return (b.row==row) && (b.col==col);
+    }
 };
 
 #endif /* NODE_H_ */

@@ -20,7 +20,7 @@ int main() {
 	OccupancyGrid grid = hamster->getSLAMMap();
 	Pose startPos(5,5);
 	Pose endPos(10,10);
-	Map map(grid, startPos, endPos);
+	Map map(grid, startPos, endPos, 0.25);
 
 	while (hamster->isConnected()) {
 		map.show();
