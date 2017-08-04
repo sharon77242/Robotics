@@ -19,8 +19,8 @@ Map::Map(OccupancyGrid &grid, const Pose& startPos, const Pose& endPos, double r
 
 void Map::initMap(OccupancyGrid &grid) {
 	mat = cv::Mat(grid.getHeight(), grid.getWidth(), CV_8UC3);
-	for (int i = 0; i < grid.getHeight(); i++) {
-		for (int j = 0; j < grid.getWidth(); j++) {
+	for (auto i = 0; i < grid.getHeight(); i++) {
+		for (auto j = 0; j < grid.getWidth(); j++) {
 			initCell(grid,i, j);
 		}
 	}
@@ -96,6 +96,12 @@ void Map::convertToCoarseGrid() {
 		}
 	}
 }
+
+OccupancyGrid Map::getCoarseGrid()
+{
+	return *coarseGrid;
+}
+
 
 void Map::show() const {
 	cv::imshow("map", mat);

@@ -29,6 +29,7 @@ private:
 	void convertToCoarseGrid();
 public:
 	Map(OccupancyGrid &grid, const Pose& startPos, const Pose& endPos, double robotSize);
+	OccupancyGrid getCoarseGrid();
 	void show() const;
 	virtual ~Map();
 };
