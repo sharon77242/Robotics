@@ -19,7 +19,9 @@ int main() {
 
 	OccupancyGrid grid = hamster->getSLAMMap();
 	Pose startPos(105, 146); // col , row
-	Pose endPos(101, 146); // col , row
+	Pose endPos(105, 152); // col , row
+//	Pose endPos(101, 146); // col , row  // this Not work!!!!!!
+
 
 	Map map(grid, startPos, endPos, 0.25);
 	OccupancyGrid coarseGrid = map.getCoarseGrid();
@@ -39,12 +41,12 @@ int main() {
 //
 	Path path (pathPlan.computeShortestPath());
 //
-//	cout << " path.size() " << path.size() << endl;
+	cout << " path.size() " << path.size() << endl;
 //
-//	for(auto itr : path)
-//	{
-//		cout << "itr->first : " << itr.first << " itr->second : " << itr.second << endl;
-//	}
+	for(auto itr : path)
+	{
+		cout << "itr->first : " << itr.first << " itr->second : " << itr.second << endl;
+	}
 
 	while (hamster->isConnected()) {
 		map.show();

@@ -69,7 +69,7 @@ vector<Node *> PathPlanner::getSuccessors(Node *node){
 Node* PathPlanner::find(priority_queue<Node *, vector<Node *>, NodeCostComparator> queue, Node *itemToFind)
 {
 	while (!queue.empty()) {
-		Node *currNode = queue.top();
+		Node* currNode = queue.top();
 		queue.pop();
 
 		if (*currNode  == *itemToFind)
@@ -86,6 +86,10 @@ Path PathPlanner::computeShortestPath() {
 	set<Node *> closeList;
 	Node *startNode = mat[startRow][startCol];
 	Node *endNode = mat[endRow][endCol];
+
+	 (startNode)->g = 0; // for now we going in 4 simple direction
+	 (startNode)->h = GetDistance(startNode,endNode);
+	 (startNode)->f = (startNode)->h;
 
 	if(startNode != nullptr)
 		openList.push(startNode);
@@ -108,10 +112,10 @@ Path PathPlanner::computeShortestPath() {
 			 return route;
 		 }
 
-		//cout << "current node with row: " << currNode->row << " col : " << currNode->col << endl;
+		cout << "current node with row: " << currNode->row << " col : " << currNode->col << endl;
 		vector<Node *> successors = getSuccessors(currNode);
 
-		//cout << "found " << successors.size() << " successors" << endl;
+		cout << "found " << successors.size() << " successors" << endl;
 
 		closeList.insert(currNode);
 
@@ -119,24 +123,38 @@ Path PathPlanner::computeShortestPath() {
 			//mat[(*it)->row][(*it)->co
 
 			if (closeList.find(*it) != closeList.end())
+			{
+				cout << "if (closeList.find(*it) != closeList.end())" << endl;
 				continue;
+			}
 
 			(*it)->parent = currNode;
 
 
 
 			 // Calc f,h,h for successor
-		 	 (*it)->g = currNode->g + 1; // for now we going in 4 simple direction
-		 	 (*it)->h = GetDistance(*it,endNode);
-		 	 (*it)->f = (*it)->g +  (*it)->h;
+		 	 float g = currNode->g + 1; // for now we going in 4 simple direction
+		 	 float h = GetDistance(*it,endNode);
+		 	 float f = (*it)->g +  (*it)->h;
 
 		 	 Node* OldSuccessor = find(openList,*it);
-		 	 if (OldSuccessor == NULL || OldSuccessor->f <= (*it)->f)
+		 	 if (OldSuccessor == NULL)
+		 		 openList.push(*it);
+		 	 if (OldSuccessor != NULL && (OldSuccessor->f <= f  && OldSuccessor->f != 0))
+		 	 {
+				cout << "if (OldSuccessor != NULL && OldSuccessor->f <= (*it)->f) OldSuccessor->f : " <<
+						OldSuccessor->f  << " (*it)->f : " << (*it)->f << endl;
 		 		 continue;
-		 	 else if (OldSuccessor != NULL && OldSuccessor->f > (*it)->f)
-				openList.remove(OldSuccessor);
+		 	 }
+		 	 else if (OldSuccessor != NULL && (OldSuccessor->f > (*it)->f || OldSuccessor->f == 0))
+		 	 {
+		 		cout << "else if (OldSuccessor != NULL && OldSuccessor->f > (*it)->f)" << endl;
+				//openList.remove(OldSuccessor);
 
-		 	 openList.push(*it);
+			 	 (*it)->g = g;
+			 	 (*it)->h = h;
+			 	 (*it)->f = f;
+		 	 }
 		}
 	}
 
