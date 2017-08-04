@@ -11,39 +11,33 @@
 #include "PathPlanner.h"
 
 using namespace std;
-HamsterAPI::Hamster * hamster;
 using namespace HamsterAPI;
 
 int main() {
-	hamster = new Hamster(1);
+	HamsterAPI::Hamster *hamster{new Hamster(1)};
 	sleep(1);
 
 	OccupancyGrid grid = hamster->getSLAMMap();
-	cout << "OccupancyGrid grid = hamster->getSLAMMap();" << endl;
-	sleep(0.5);
-	Pose startPos(100, 148); // col , row
-	Pose endPos(102, 146); // col , row
-	Map map(grid, startPos, endPos, 0.25);
-	cout << "Map map(grid, startPos, endPos, 0.25);" << endl;
-	sleep(0.2);
-	OccupancyGrid coarseGrid = map.getCoarseGrid();
-	cout << "OccupancyGrid coarseGrid = map.getCoarseGrid();" << endl;
+	Pose startPos(105, 146); // col , row
+	Pose endPos(101, 146); // col , row
 
-	for (auto i = 0; i < coarseGrid.getHeight(); i++)
-	{
-		for (auto j = 0; j < coarseGrid.getWidth(); j++)
-		{
-			Cell currCell{coarseGrid.getCell(j, i)};
-			if (currCell == CELL_FREE)
-				cout << "free cell  row  : " << i << " col : " << j << endl;
-		}
-	}
+	Map map(grid, startPos, endPos, 0.25);
+	OccupancyGrid coarseGrid = map.getCoarseGrid();
+
+//	for (auto i = 0; i < coarseGrid.getHeight(); i++)
+//	{
+//		for (auto j = 0; j < coarseGrid.getWidth(); j++)
+//		{
+//			Cell currCell{coarseGrid.getCell(j, i)};
+//			if (currCell == CELL_FREE)
+//				cout << "free cell  row  : " << i << " col : " << j << endl;
+//		}
+//	}
 
 	PathPlanner pathPlan(coarseGrid, startPos.getY(), startPos.getX(), endPos.getY(), endPos.getX());
 	cout << "PathPlanner pathPlan(coarseGrid, startPos.getY(), startPos.getX(), endPos.getY(), endPos.getX());" << endl;
 
 	Path path (pathPlan.computeShortestPath());
-	cout << "Path path (pathPlan.computeShortestPath());" << endl;
 
 	cout << " path.size() " << path.size() << endl;
 

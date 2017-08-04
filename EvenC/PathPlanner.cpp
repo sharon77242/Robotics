@@ -32,10 +32,12 @@ void PathPlanner::buildGraph() {
 		for (int j = 0; j < cols; j++) {
 			Cell c = grid.getCell(j, i);
 			if (c == CELL_FREE) {
+				//cout << " path plan free cell i : " << i  << " j : " << j << endl;
 				Node *node = new Node();
 				node->row = i;
 				node->col = j;
 				node->f = 0;
+				mat[i][j] = node;
 			}
 		}
 	}
@@ -88,12 +90,15 @@ Path PathPlanner::computeShortestPath() {
 	if(startNode != nullptr)
 		openList.push(startNode);
 	else
-		cout << "start node isnt nullptr" << endl;
+		cout << "start node is nullptr" << endl;
 
 	while (!openList.empty()) {
 		Node *currNode = openList.top();
 		openList.pop();
+		cout << "current node with row: " << currNode->row << " col : " << currNode->col << endl;
 		vector<Node *> successors = getSuccessors(currNode);
+
+		cout << "found " << successors.size() << " successors" << endl;
 
 		closeList.insert(currNode);
 
@@ -108,6 +113,7 @@ Path PathPlanner::computeShortestPath() {
 			// Check if get to  goal
 			 if ((*it) == endNode)
 			 {
+				 cout << "got to goal " << endl;
 				 Node* curr= (*it);
 				 while(curr->row != startNode->row || curr->col != startNode->col)
 				 {

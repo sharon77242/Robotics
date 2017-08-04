@@ -13,6 +13,7 @@ Map::Map(OccupancyGrid &grid, const Pose& startPos, const Pose& endPos, double r
 , endPos(endPos){
 	cv::namedWindow("map", cv::WINDOW_NORMAL);
 	robotSizeInPixels = robotSize / grid.getResolution();
+	setOccupyWithWall();
 	convertToCoarseGrid();
 	initMap(*coarseGrid);
 }
@@ -36,12 +37,17 @@ void Map::paintCell(int row, int col, int firstColor, int secondColor, int third
 	mat.at<cv::Vec3b>(row, col)[2] = thirdColor;
 }
 
-void Map::paintWithAWall(int i, int j) {
+void Map::setOccupyWithWall() {
 	double gridResolution = grid.getResolution(); // 0.05
 	double wall = 0.3 / gridResolution / 2; // 3
-	for (int row = i - wall; row < i + wall; ++row) {
-		for (int col = j - wall; col < j + wall; ++col) {
-			paintCell(i, j, 0, 0, 0);
+	for (auto i  = 0; i < grid.getHeight(); ++i) {
+		for (auto j = 0; j < grid.getWidth(); ++j) {
+			if(grid.getCell(j, i) == CELL_OCCUPIED)
+			for (auto row = i - wall; row < i + wall && row < grid.getHeight() && row >= 0; ++row) {
+				for (auto col = j - wall; col < j + wall && col < grid.getWidth() && col >= 0; ++col) {
+					grid.setCell(j, i, CELL_OCCUPIED);
+				}
+			}
 		}
 	}
 }
@@ -50,7 +56,7 @@ void Map::initCell(OccupancyGrid &grid,int i, int j) {
 	Cell c = grid.getCell(j, i);
 	if(i == startPos.getY() && j == startPos.getX())
 	{
-		paintCell(i, j, 0, 191, 255);
+		paintCell(i, j, 0, 0, 255);
 		std::cout << "painting blue" << std::endl;
 	}
 	else if(i == endPos.getY() && j == endPos.getX())
@@ -62,7 +68,7 @@ void Map::initCell(OccupancyGrid &grid,int i, int j) {
 		paintCell(i, j, 255, 255, 255);
 	}
 	else if (c == CELL_OCCUPIED) {
-		paintWithAWall(i, j);
+		paintCell(i, j, 0, 0, 0);
 	}
 	else { // Unknown
 		paintCell(i, j, 128, 128, 128);

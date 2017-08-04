@@ -25,7 +25,7 @@ private:
 	void initMap(OccupancyGrid &grid);
 	void initCell(OccupancyGrid &grid,int i, int j);
 	void paintCell(int row, int col, int firstColor, int secondColor, int thirdColor);
-	void paintWithAWall(int i, int j);
+	void setOccupyWithWall();
 	void convertToCoarseGrid();
 public:
 	Map(OccupancyGrid &grid, const Pose& startPos, const Pose& endPos, double robotSize);
