@@ -19,15 +19,37 @@ int main() {
 	sleep(1);
 
 	OccupancyGrid grid = hamster->getSLAMMap();
-	Pose startPos();
-	Pose endPos();
+	cout << "OccupancyGrid grid = hamster->getSLAMMap();" << endl;
+	sleep(0.5);
+	Pose startPos(100, 148); // col , row
+	Pose endPos(102, 146); // col , row
 	Map map(grid, startPos, endPos, 0.25);
+	cout << "Map map(grid, startPos, endPos, 0.25);" << endl;
+	sleep(0.2);
 	OccupancyGrid coarseGrid = map.getCoarseGrid();
-	PathPlanner pathPlan(coarseGrid, startPos.getY(), startPos.getX(), endPos.getY(), endPos.getX());
-	Path path (pathPlan.computeShortestPath());
-	for(auto itr = path.begin(); itr != path.end(); ++itr)
+	cout << "OccupancyGrid coarseGrid = map.getCoarseGrid();" << endl;
+
+	for (auto i = 0; i < coarseGrid.getHeight(); i++)
 	{
-		cout << "itr->first : " << itr->first << " itr->second : " << itr->second << endl;
+		for (auto j = 0; j < coarseGrid.getWidth(); j++)
+		{
+			Cell currCell{coarseGrid.getCell(j, i)};
+			if (currCell == CELL_FREE)
+				cout << "free cell  row  : " << i << " col : " << j << endl;
+		}
+	}
+
+	PathPlanner pathPlan(coarseGrid, startPos.getY(), startPos.getX(), endPos.getY(), endPos.getX());
+	cout << "PathPlanner pathPlan(coarseGrid, startPos.getY(), startPos.getX(), endPos.getY(), endPos.getX());" << endl;
+
+	Path path (pathPlan.computeShortestPath());
+	cout << "Path path (pathPlan.computeShortestPath());" << endl;
+
+	cout << " path.size() " << path.size() << endl;
+
+	for(auto itr : path)
+	{
+		cout << "itr->first : " << itr.first << " itr->second : " << itr.second << endl;
 	}
 
 	while (hamster->isConnected()) {

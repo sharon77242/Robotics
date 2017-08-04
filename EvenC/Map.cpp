@@ -47,10 +47,10 @@ void Map::paintWithAWall(int i, int j) {
 }
 
 void Map::initCell(OccupancyGrid &grid,int i, int j) {
-	Cell c = grid.getCell(i, j);
+	Cell c = grid.getCell(j, i);
 	if(i == startPos.getY() && j == startPos.getX())
 	{
-		paintCell(i, j, 0, 0, 255);
+		paintCell(i, j, 0, 191, 255);
 		std::cout << "painting blue" << std::endl;
 	}
 	else if(i == endPos.getY() && j == endPos.getX())
@@ -83,16 +83,16 @@ void Map::convertToCoarseGrid() {
 			bool isOccupied = false;
 			for (int k = row; k < row + robotSizeInPixels && !isOccupied; k++) {
 				for (int m = col; m < col + robotSizeInPixels; m++) {
-					if (grid.getCell(k, m) != CELL_FREE) {
+					if (grid.getCell(m, k) != CELL_FREE) {
 						isOccupied = true;
 						break;
 					}
 				}
 			}
 			if (isOccupied)
-				coarseGrid->setCell(i, j, CELL_OCCUPIED);
+				coarseGrid->setCell(j, i, CELL_OCCUPIED);
 			else
-				coarseGrid->setCell(i, j, CELL_FREE);
+				coarseGrid->setCell(j, i, CELL_FREE);
 		}
 	}
 }

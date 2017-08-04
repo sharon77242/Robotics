@@ -9,8 +9,9 @@
 #include <queue>
 #include <math.h>
 
-PathPlanner::PathPlanner(OccupancyGrid &grid, int startRow, int startCol,int endRow, int endCol) : grid(grid), startRow(startRow), startCol(startCol), endRow(endRow),endCol(endCol) {
-
+PathPlanner::PathPlanner(OccupancyGrid &grid, int startRow, int startCol,int endRow, int endCol)
+: grid(grid), startRow(startRow), startCol(startCol), endRow(endRow),endCol(endCol)
+{
 }
 
 float PathPlanner::GetDistance(Node *p1,Node *p2)
@@ -29,7 +30,7 @@ void PathPlanner::buildGraph() {
 
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
-			Cell c = grid.getCell(i, j);
+			Cell c = grid.getCell(j, i);
 			if (c == CELL_FREE) {
 				Node *node = new Node();
 				node->row = i;
@@ -86,6 +87,8 @@ Path PathPlanner::computeShortestPath() {
 
 	if(startNode != nullptr)
 		openList.push(startNode);
+	else
+		cout << "start node isnt nullptr" << endl;
 
 	while (!openList.empty()) {
 		Node *currNode = openList.top();
