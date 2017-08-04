@@ -95,10 +95,23 @@ Path PathPlanner::computeShortestPath() {
 	while (!openList.empty()) {
 		Node *currNode = openList.top();
 		openList.pop();
-		cout << "current node with row: " << currNode->row << " col : " << currNode->col << endl;
+
+		// Check if get to  goal
+		 if (*currNode == *endNode)
+		 {
+			 cout << "got to goal " << endl;
+			 while(currNode->row != startNode->row || currNode->col != startNode->col)
+			 {
+				 route.push_back(make_pair(currNode->row,currNode->col));
+			 }
+
+			 return route;
+		 }
+
+		//cout << "current node with row: " << currNode->row << " col : " << currNode->col << endl;
 		vector<Node *> successors = getSuccessors(currNode);
 
-		cout << "found " << successors.size() << " successors" << endl;
+		//cout << "found " << successors.size() << " successors" << endl;
 
 		closeList.insert(currNode);
 
@@ -110,18 +123,7 @@ Path PathPlanner::computeShortestPath() {
 
 			(*it)->parent = currNode;
 
-			// Check if get to  goal
-			 if ((*it) == endNode)
-			 {
-				 cout << "got to goal " << endl;
-				 Node* curr= (*it);
-				 while(curr->row != startNode->row || curr->col != startNode->col)
-				 {
-					 route.push_back(make_pair(curr->row,curr->col));
-				 }
 
-				 return route;
-			 }
 
 			 // Calc f,h,h for successor
 		 	 (*it)->g = currNode->g + 1; // for now we going in 4 simple direction

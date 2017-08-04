@@ -33,18 +33,18 @@ int main() {
 //				cout << "free cell  row  : " << i << " col : " << j << endl;
 //		}
 //	}
-
+//
 	PathPlanner pathPlan(coarseGrid, startPos.getY(), startPos.getX(), endPos.getY(), endPos.getX());
-	cout << "PathPlanner pathPlan(coarseGrid, startPos.getY(), startPos.getX(), endPos.getY(), endPos.getX());" << endl;
-
+//	cout << "PathPlanner pathPlan(coarseGrid, startPos.getY(), startPos.getX(), endPos.getY(), endPos.getX());" << endl;
+//
 	Path path (pathPlan.computeShortestPath());
-
-	cout << " path.size() " << path.size() << endl;
-
-	for(auto itr : path)
-	{
-		cout << "itr->first : " << itr.first << " itr->second : " << itr.second << endl;
-	}
+//
+//	cout << " path.size() " << path.size() << endl;
+//
+//	for(auto itr : path)
+//	{
+//		cout << "itr->first : " << itr.first << " itr->second : " << itr.second << endl;
+//	}
 
 	while (hamster->isConnected()) {
 		map.show();
