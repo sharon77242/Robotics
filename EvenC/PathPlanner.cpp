@@ -83,7 +83,9 @@ Path PathPlanner::computeShortestPath() {
 	set<Node *> closeList;
 	Node *startNode = mat[startRow][startCol];
 	Node *endNode = mat[endRow][endCol];
-	openList.push(startNode);
+
+	if(startNode != nullptr)
+		openList.push(startNode);
 
 	while (!openList.empty()) {
 		Node *currNode = openList.top();
