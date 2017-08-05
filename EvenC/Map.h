@@ -24,12 +24,12 @@ private:
 	// send the wanted OccupancyGrid (coarseGrid or  grid) stil not sure which one
 	void initMap(OccupancyGrid &grid);
 	void initCell(OccupancyGrid &grid,int i, int j);
-	void paintCell(int row, int col, int firstColor, int secondColor, int thirdColor);
 	void setOccupyWithWall();
 	void convertToCoarseGrid();
 public:
 	Map(OccupancyGrid &grid, const Pose& startPos, const Pose& endPos, double robotSize);
 	OccupancyGrid getCoarseGrid();
+	void paintCell(int row, int col, int firstColor, int secondColor, int thirdColor);
 	void show() const;
 	virtual ~Map();
 };

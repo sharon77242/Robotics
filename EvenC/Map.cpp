@@ -56,7 +56,7 @@ void Map::initCell(OccupancyGrid &grid,int i, int j) {
 	Cell c = grid.getCell(j, i);
 	if(i == startPos.getY() && j == startPos.getX())
 	{
-		paintCell(i, j, 0, 0, 255);
+		paintCell(i, j, 255, 0, 0);
 		std::cout << "painting blue" << std::endl;
 	}
 	else if(i == endPos.getY() && j == endPos.getX())

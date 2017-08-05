@@ -8,6 +8,10 @@
 #include "PathPlanner.h"
 #include <queue>
 #include <math.h>
+#include <limits>
+
+
+float maxFloat = std::numeric_limits<float>::max();
 
 PathPlanner::PathPlanner(OccupancyGrid &grid, int startRow, int startCol,int endRow, int endCol)
 : grid(grid), startRow(startRow), startCol(startCol), endRow(endRow),endCol(endCol)
@@ -36,9 +40,12 @@ void PathPlanner::buildGraph() {
 				Node *node = new Node();
 				node->row = i;
 				node->col = j;
-				node->f = 0;
+				node->g = maxFloat;
+				node->f = maxFloat;
 				mat[i][j] = node;
 			}
+			else
+				mat[i][j] = NULL;
 		}
 	}
 }
@@ -60,7 +67,7 @@ vector<Node *> PathPlanner::getSuccessors(Node *node){
 		int neighborCol = col + Neighbors[i][NEIGHBORS_COL_DELTA];
 
 		if(IsInMapRange(neighborRow,neighborCol) && (mat[neighborRow][neighborCol]))
-			successors.push_back(mat[row + 1][col]);
+			successors.push_back(mat[neighborRow][neighborCol]);
 	}
 
 	return successors;
@@ -78,10 +85,26 @@ Node* PathPlanner::find(priority_queue<Node *, vector<Node *>, NodeCostComparato
 	return NULL;
 }
 
+const Path& PathPlanner::routeToGoal(Node* currNode, Node* startNode)
+{
+	Path route;
+
+	 cout << "got to goal " << endl;
+
+	while (currNode->row != startNode->row || currNode->col != startNode->col)
+	{
+		route.push_back(make_pair(currNode->row, currNode->col));
+		currNode = currNode->parent;
+	}
+
+	route.push_back(make_pair(currNode->row, currNode->col));
+
+	return route;
+}
+
 Path PathPlanner::computeShortestPath() {
 	buildGraph();
 
-	Path route;
 	Node_priority_queue openList;
 	set<Node *> closeList;
 	Node *startNode = mat[startRow][startCol];
@@ -91,74 +114,52 @@ Path PathPlanner::computeShortestPath() {
 	 (startNode)->h = GetDistance(startNode,endNode);
 	 (startNode)->f = (startNode)->h;
 
-	if(startNode != nullptr)
+	if(startNode != nullptr && endNode != nullptr)
 		openList.push(startNode);
 	else
-		cout << "start node is nullptr" << endl;
+		cout << "start node or end node is nullptr" << endl;
 
 	while (!openList.empty()) {
 		Node *currNode = openList.top();
-		openList.pop();
 
 		// Check if get to  goal
 		 if (*currNode == *endNode)
-		 {
-			 cout << "got to goal " << endl;
-			 while(currNode->row != startNode->row || currNode->col != startNode->col)
-			 {
-				 route.push_back(make_pair(currNode->row,currNode->col));
-			 }
+			 return routeToGoal(currNode, startNode);
 
-			 return route;
-		 }
-
-		cout << "current node with row: " << currNode->row << " col : " << currNode->col << endl;
 		vector<Node *> successors = getSuccessors(currNode);
 
-		cout << "found " << successors.size() << " successors" << endl;
-
+		openList.pop();
 		closeList.insert(currNode);
 
 		for(vector<Node *>::iterator it = successors.begin(); it != successors.end(); ++it) {
-			//mat[(*it)->row][(*it)->co
 
 			if (closeList.find(*it) != closeList.end())
-			{
-				cout << "if (closeList.find(*it) != closeList.end())" << endl;
 				continue;
-			}
-
-			(*it)->parent = currNode;
-
-
 
 			 // Calc f,h,h for successor
 		 	 float g = currNode->g + 1; // for now we going in 4 simple direction
 		 	 float h = GetDistance(*it,endNode);
-		 	 float f = (*it)->g +  (*it)->h;
+		 	 float f = g + h;
 
 		 	 Node* OldSuccessor = find(openList,*it);
-		 	 if (OldSuccessor == NULL)
-		 		 openList.push(*it);
-		 	 if (OldSuccessor != NULL && (OldSuccessor->f <= f  && OldSuccessor->f != 0))
-		 	 {
-				cout << "if (OldSuccessor != NULL && OldSuccessor->f <= (*it)->f) OldSuccessor->f : " <<
-						OldSuccessor->f  << " (*it)->f : " << (*it)->f << endl;
+
+		 	 if (OldSuccessor != NULL && (OldSuccessor->g <= g  ))
 		 		 continue;
-		 	 }
-		 	 else if (OldSuccessor != NULL && (OldSuccessor->f > (*it)->f || OldSuccessor->f == 0))
+		 	 else
 		 	 {
-		 		cout << "else if (OldSuccessor != NULL && OldSuccessor->f > (*it)->f)" << endl;
-				//openList.remove(OldSuccessor);
+				(*it)->parent = currNode;
 
 			 	 (*it)->g = g;
 			 	 (*it)->h = h;
 			 	 (*it)->f = f;
+
+				openList.remove(OldSuccessor);
+			 	openList.push(*it);
 		 	 }
 		}
 	}
 
-	return route;
+	return Path{};
 }
 
 PathPlanner::~PathPlanner() {
