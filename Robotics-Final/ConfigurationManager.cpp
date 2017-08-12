@@ -1,8 +1,9 @@
-#include "ParametersReader.h"
+#include "ConfigurationManager.h"
+
 #include "stdlib.h"
 
-ParametersReader::ParametersReader(const char *path) {
-	ifstream file(path);
+ConfigurationManager::ConfigurationManager(const string& path) {
+	ifstream file(path.c_str());
 	while(file)
 	{
 		// Split configuration file to parameter name and parameter value
@@ -24,7 +25,7 @@ ParametersReader::ParametersReader(const char *path) {
 
 }
 
-string ParametersReader::Trim(string str)
+string ConfigurationManager::Trim(string str)
 {
 	// Trim start
 	while(str.length() &&
@@ -45,7 +46,7 @@ string ParametersReader::Trim(string str)
 	return str;
 }
 
-Position* ParametersReader::GetStartLocation()
+Position* ConfigurationManager::GetStartLocation()
 {
 	string valueStr = _params["startLocation"];
 	istringstream lineStream(valueStr);
@@ -64,7 +65,7 @@ Position* ParametersReader::GetStartLocation()
 	return robotPos;
 }
 
-Position* ParametersReader::GetGoal()
+Position* ConfigurationManager::GetGoal()
 {
 	string valueStr = _params["goal"];
 	istringstream lineStream(valueStr);
@@ -80,7 +81,7 @@ Position* ParametersReader::GetGoal()
 	return goalPos;
 }
 
-int ParametersReader::GetRobotSize()
+int ConfigurationManager::GetRobotSize()
 {
 	string valueStr = _params["robotSize"];
 	istringstream lineStream(valueStr);
@@ -89,6 +90,6 @@ int ParametersReader::GetRobotSize()
 	return atoi(valueStr.c_str());
 }
 
-ParametersReader::~ParametersReader() {
+ConfigurationManager::~ConfigurationManager() {
 }
 

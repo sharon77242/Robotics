@@ -10,10 +10,8 @@ using namespace cv;
 
 class MatrixHelper {
 public:
-	MatrixHelper();
-	virtual ~MatrixHelper();
-	static Mat TranslateMat(Mat &mat, int offsetx, int offsety);
-	static Mat RotateMat(Mat &mat, double rotationAngle);
+	static void TranslateMat(Mat &mat, int offsetx, int offsety);
+	static void RotateMat(Mat &mat, double rotationAngle);
 };
 
 #endif /* MATRIXHELPER_H_ */

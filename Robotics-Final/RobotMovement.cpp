@@ -24,7 +24,7 @@ void RobotMovement::GetDelts(Position * currentLocation, double &deltaXInPixel,
 }
 
 // The function returns true if the robot arrive to the waypoint, else false.
-bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster * hamster, Position * positionTarget)
+bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster& hamster, Position * positionTarget)
 {
 	try {
 		double deltaX;
@@ -40,7 +40,7 @@ bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster * hamster, Position 
 			return true;
 		}
 
-		HamsterAPI::LidarScan ld = hamster->getLidarScan();
+		HamsterAPI::LidarScan ld = hamster.getLidarScan();
 
 		GetDelts(currentLocation, deltaX, deltaY, deltaYaw);
 		_particalesManager->ResampleParticles(deltaX,deltaY, deltaYaw);
@@ -49,26 +49,26 @@ bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster * hamster, Position 
 		if (ObstaclesInFrontOfRobot(&ld)) {
 			if(turnAngle > 0)
 			{
-				hamster->sendSpeed(-0.5, -10);
+				hamster.sendSpeed(-0.5, -10);
 			}
 			else
 			{
-				hamster->sendSpeed(-0.5, 10);
+				hamster.sendSpeed(-0.5, 10);
 			}
 		}
 		else if (ld.getDistance(180) < 0.6) {
 			if(turnAngle > 0)
 			{
-				hamster->sendSpeed(0.5, 45);
+				hamster.sendSpeed(0.5, 45);
 			}
 			else
 			{
-				hamster->sendSpeed(0.5, -45);
+				hamster.sendSpeed(0.5, -45);
 			}
 		}
 		else
 		{
-			hamster->sendSpeed(1.0, turnAngle/4);
+			hamster.sendSpeed(1.0, turnAngle/4);
 			sleep(0.1);
 		}
 
@@ -82,8 +82,8 @@ bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster * hamster, Position 
 	return false;
 }
 
-void RobotMovement::PrintLocationOfRobot(HamsterAPI::Hamster * hamster){
-	Pose currentLocation = hamster->getPose();
+void RobotMovement::PrintLocationOfRobot(const HamsterAPI::Hamster& hamster){
+	Pose currentLocation = hamster.getPose();
 
 	cout << "Robot Is At:  " << currentLocation.getX() << ", " << currentLocation.getY() << "  , Heading:  " << currentLocation.getHeading() << endl;
 }
@@ -152,7 +152,7 @@ bool RobotMovement::ObstaclesInFrontOfRobot(HamsterAPI::LidarScan * ld){
 	return obstaclesExists;
 }
 
-Position * RobotMovement::GetCurrentPosition (Hamster * hamster){
+Position * RobotMovement::GetCurrentPosition (Hamster& hamster){
 	sleep(0.1);
 
 	if(_movementMode == MovementParticles)
@@ -161,7 +161,7 @@ Position * RobotMovement::GetCurrentPosition (Hamster * hamster){
 	}
 	else
 	{
-		Pose realPosition = hamster->getPose();
+		Pose realPosition = hamster.getPose();
 		Position * p = new Position(realPosition.getX(),realPosition.getY(), realPosition.getHeading());
 
 		return p;

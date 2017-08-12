@@ -18,9 +18,19 @@ using namespace std;
 using namespace HamsterAPI;
 
 class ParticlesManager {
+public:
+	ParticlesManager(Hamster& hamster, Map * map);
+	void InitializeParticles(Position * firstMapPos);
+	void ResampleParticles(double deltaX, double deltaY, double deltaYaw);
+	Position * GetBestParticlePosition();
+
+	vector<Particle *> GetParticles() const;
+
+	virtual ~ParticlesManager();
+
 private:
 	vector<Particle *> _particlesVector;
-	Hamster * _hamster;
+	Hamster& _hamster;
 	Map * _map;
 	double CalculateBelief(Particle *particle, double deltaX, double deltaY, double deltaYaw);
 
@@ -38,15 +48,7 @@ private:
 	void SetToRandomCloseToPoint(Particle *particle, Position * firstPosition);
 	double getNextBelief (Particle* particle, int misses, int matches, double deltaX, double deltaY, double deltaYaw);
 
-public:
-	ParticlesManager(Hamster *hamster, Map * map);
-	void InitializeParticles(Position * firstMapPos);
-	void ResampleParticles(double deltaX, double deltaY, double deltaYaw);
-	Position * GetBestParticlePosition();
 
-	vector<Particle *> GetParticles() const;
-
-	virtual ~ParticlesManager();
 };
 
 #endif /* PARTICLESMANAGER_H_ */

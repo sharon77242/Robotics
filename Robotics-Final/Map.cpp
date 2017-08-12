@@ -1,7 +1,12 @@
 #include "Map.h"
+
 using namespace std;
+using namespace HamsterAPI;
+using namespace cv;
 
 typedef std::pair<NodeType,Vec3b> NodeTypeRGB;
+
+//TODO : refactor it to colors
 
 Vec3b BLUE = Vec3b(255, 0, 0);
 Vec3b GREEN = Vec3b(0, 255, 0);
@@ -16,7 +21,7 @@ Map::Map(const OccupancyGrid &grid, int robot_size, float resolution) :
 	_originalOccupancyGrid(grid), _robot_size(robot_size), _resolution(resolution)
 {
 	// Calculate cell padding size by resolution and robot size
-	_cube_padding_size = ceil((double)_robot_size / 2 / _resolution);
+	_cube_padding_size = ceil((double)_robot_size / _resolution / 2);
 
 	_rotatedOccupancyGrid = CreateRotatedGrid(_originalOccupancyGrid);
 	_inflatedOccupancyGrid = CreateInflatedGrid(*_rotatedOccupancyGrid, _cube_padding_size);
@@ -44,20 +49,20 @@ unsigned int Map::GetWidth()
 	return _originalOccupancyGrid.getWidth();
 }
 
-OccupancyGrid* Map::CreateRotatedGrid(OccupancyGrid ogrid)
+OccupancyGrid* Map::CreateRotatedGrid(OccupancyGrid grid)
 {
-	int height = ogrid.getHeight();
-	int width = ogrid.getWidth();
-	Mat matrix = ConvertGridToMatrix(ogrid);
+	int height = grid.getHeight();
+	int width = grid.getWidth();
+	Mat matrix = ConvertGridToMatrix(grid);
 
 	MatrixHelper::TranslateMat(matrix, 42, 42);
 	MatrixHelper::RotateMat(matrix, -30);
 
-	OccupancyGrid* rotatedGrid = new OccupancyGrid(height, width, ogrid.getResolution());
+	OccupancyGrid* rotatedGrid = new OccupancyGrid(height, width, grid.getResolution());
 
-	for (int i = 0; i < height; i++)
+	for (int i = 0; i < height; ++i)
 	{
-		for (int j = 0; j < width; j++)
+		for (int j = 0; j < width; ++j)
 		{
 			Vec3b color = matrix.at<Vec3b>(i,j);
 			if(norm(color, BLACK, NORM_INF)==0){
@@ -125,7 +130,9 @@ const OccupancyGrid *Map::GetRotatedGrid(){
 	return _rotatedOccupancyGrid;
 }
 
-void Map::DrawParticles(vector<Particle *> particles) {
+void Map::DrawParticles(vector<Particle *> particles)
+{
+	static const string PARTICLES_VIEW ("Particles-View");
 	Mat matrix = ConvertGridToMatrix(*_rotatedOccupancyGrid);
 	int size = particles.size();
 	int best = 5;
@@ -225,21 +232,23 @@ Mat Map::ConvertGridToMatrix(OccupancyGrid ogrid)
 
 void Map::DrawPath(vector<Node *> nodes)
 {
+	static const string PATH_MAP_VIEW ("Path-View");
 	Mat mat = ConvertGridToMatrix(*_inflatedOccupancyGrid);
 	for (unsigned int i = 0; i < nodes.size(); i++)
 	{
-		Position *p = nodes[i]->GetLocationInMap();
+		Position *p = nodes[i]->location;
 		SetColorInMatrixArea(mat, p->Y(), p->X(), _cube_padding_size,
-							_node_type_color[nodes[i]->GetType()]);
+							_node_type_color[nodes[i]->type]);
 	}
 
 	if(nodes.size()!=0){
-	Position *start = nodes[0]->GetLocationInMap();
+	Position *start = nodes[0]->location;
 	SetColorInMatrixArea(mat, start->Y(), start->X(), _cube_padding_size, BLUE);
 
-	Position *end = nodes[nodes.size() - 1]->GetLocationInMap();
+	Position *end = nodes[nodes.size() - 1]->location;
 	SetColorInMatrixArea(mat, end->Y(), end->X(), _cube_padding_size, GREEN);
 	}
+
 	ShowMap(PATH_MAP_VIEW, mat);
 }
 

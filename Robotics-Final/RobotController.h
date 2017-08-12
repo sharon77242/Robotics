@@ -5,16 +5,17 @@
 #include "RobotMovement.h"
 #include "math.h"
 #include "WaypointManager.h"
-#include "AStarAlgo.h"
 #include "RobotController.h"
-#include "ParametersReader.h"
+
+#include "ConfigurationManager.h"
+#include "PathPlanner.h"
 
 class RobotController
 {
 
 private:
-	Hamster* _hamster;
-	ParametersReader* _config;
+	Hamster& _hamster;
+	ConfigurationManager* _config;
 	Map* _map;
 	OccupancyGrid _occupancygrid;
 	ParticlesManager* _particlesManager;
@@ -27,7 +28,7 @@ private:
 
 
 public:
-	RobotController(Hamster* hamster, ParametersReader* config);
+	RobotController(Hamster& hamster, ConfigurationManager* config);
 	void Start();
 };
 

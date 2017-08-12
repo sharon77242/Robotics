@@ -1,12 +1,15 @@
-#include "AStarAlgo.h"
+#include "PathPlanner.h"
+
+#include <HamsterAPIClientCPP/Hamster.h>
 #include <cmath>
 
+using namespace HamsterAPI;
 using namespace std;
 
 int GAUSSIAN_RADIUS = 5;
 double OCCUPIED_WEIGHT = 200;
 
-AStarAlgo::AStarAlgo(Map * map)
+PathPlanner::PathPlanner(Map * map)
 {
 	_graphWidth = map->GetWidth();
 	_graphHeight = map->GetHeight();
@@ -14,12 +17,12 @@ AStarAlgo::AStarAlgo(Map * map)
 }
 
 // A* algorithm
-vector<Node *> AStarAlgo::AStar(Position * start, Position * goal)
+vector<Node *> PathPlanner::AStar(Position * start, Position * goal)
 {
 	Node *startNode = _graph[(_graphWidth * start->Y()) + start->X()];
 	Node *goalNode = _graph[(_graphWidth * goal->Y()) + goal->X()];
 	map<Node *, Node *> cameFrom; // save for each Node we visit the Node we came from
-	priority_queue<Node *, vector<Node *>, AStarComparison> openset;
+	priority_queue<Node *, vector<Node *>, PathComparison> openset;
 
 	// Use this maps to simplify the existence check of any Node
 	map<Node *, bool> opensetMap;
@@ -28,8 +31,8 @@ vector<Node *> AStarAlgo::AStar(Position * start, Position * goal)
 	openset.push(startNode);
 	opensetMap[startNode] = true;
 
-	startNode->SetG(0);
-	startNode->SetH(GetDistanceBetweenNodes(startNode, goalNode));
+	startNode->h = 0;
+	startNode->h = GetDistanceBetweenNodes(startNode, goalNode);
 
 	while (!openset.empty())
 	{
@@ -45,17 +48,17 @@ vector<Node *> AStarAlgo::AStar(Position * start, Position * goal)
 		closedsetMap[current] = true;
 
 		// Visit all neighbors
-		for (unsigned int i = 0; i < current->GetAdjacentList().size(); i++)
+		for (unsigned int i = 0; i < current->adj.size(); i++)
 		{
-			Node *neighbor = current->GetAdjacentList()[i];
+			Node *neighbor = current->adj[i];
 			if (closedsetMap[neighbor])
 				continue;
-			double tentativeGScore = current->GetG() + GetDistanceBetweenNodes(current, neighbor);
-			if (!opensetMap[neighbor] || tentativeGScore < neighbor->GetG())
+			double tentativeGScore = current->g + GetDistanceBetweenNodes(current, neighbor);
+			if (!opensetMap[neighbor] || tentativeGScore < neighbor->g)
 			{
 				cameFrom[neighbor] = current;
-				neighbor->SetG(tentativeGScore);
-				neighbor->SetH(GetDistanceBetweenNodes(neighbor, goalNode));
+				neighbor->g = tentativeGScore;
+				neighbor->h = GetDistanceBetweenNodes(neighbor, goalNode);
 				if (!opensetMap[neighbor])
 				{
 					openset.push(neighbor);
@@ -68,10 +71,10 @@ vector<Node *> AStarAlgo::AStar(Position * start, Position * goal)
 }
 
 // This is the heuristic function for the A* algorithm
-double AStarAlgo::GetDistanceBetweenNodes(Node *start, Node *goal)
+double PathPlanner::GetDistanceBetweenNodes(Node *start, Node *goal)
 {
-	Position *startLocation = start->GetLocationInMap();
-	Position *goalLocation = goal->GetLocationInMap();
+	Position *startLocation = start->location;
+	Position *goalLocation = goal->location;
 
 	double a2 = pow(goalLocation->X() - startLocation->X(), 2);
 	double b2 = pow(goalLocation->Y() - startLocation->Y(), 2);
@@ -79,7 +82,7 @@ double AStarAlgo::GetDistanceBetweenNodes(Node *start, Node *goal)
 	return dist;
 }
 
-vector<Node *> AStarAlgo::ReconstructPath(map<Node *, Node *> cameFrom, Node *current)
+vector<Node *> PathPlanner::ReconstructPath(map<Node *, Node *> cameFrom, Node *current)
 {
 	vector<Node *> totalPath;
 	while (current)
@@ -97,7 +100,7 @@ vector<Node *> AStarAlgo::ReconstructPath(map<Node *, Node *> cameFrom, Node *cu
 	return reversedTotalPath;
 }
 
-vector<Node *> AStarAlgo::ConvertMapToGraph(Map *map)
+vector<Node *> PathPlanner::ConvertMapToGraph(Map *map)
 {
 	int width = map->GetWidth(), height = map->GetHeight();
 	int size = (width * height);
@@ -108,8 +111,8 @@ vector<Node *> AStarAlgo::ConvertMapToGraph(Map *map)
 		{
 			Position *currentPosition = new Position(j, i);
 			Node *v = new Node(currentPosition, PATH);
-			int initialCost = AStarAlgo::GetGaussianWeight(*currentPosition, map, GAUSSIAN_RADIUS, OCCUPIED_WEIGHT);
-			v->SetInitialCost(initialCost);
+			int initialCost = PathPlanner::GetGaussianWeight(*currentPosition, map, GAUSSIAN_RADIUS, OCCUPIED_WEIGHT);
+			v->initialCost = initialCost;
 			graph[(i * width) + j] = v;
 		}
 	}
@@ -139,7 +142,7 @@ vector<Node *> AStarAlgo::ConvertMapToGraph(Map *map)
 	return graph;
 }
 
-double AStarAlgo::GetGaussianWeight(Position currentPosition, Map *map, int gaussianRadius, double occupiedWeight)
+double PathPlanner::GetGaussianWeight(Position currentPosition, Map *map, int gaussianRadius, double occupiedWeight)
 {
 	if (map->GetGridCell(currentPosition.X(), currentPosition.Y()) != CELL_FREE)
 	{
@@ -174,7 +177,7 @@ double AStarAlgo::GetGaussianWeight(Position currentPosition, Map *map, int gaus
 		return val/wsum;
 }
 
-void AStarAlgo::AddNeighborIfPossible(Position currentPosition, Position neighborPosition, Map *map, vector<Node *> *graph)
+void PathPlanner::AddNeighborIfPossible(Position currentPosition, Position neighborPosition, Map *map, vector<Node *> *graph)
 {
 	int width = map->GetWidth();
 	int size = width * map->GetHeight();
@@ -184,10 +187,10 @@ void AStarAlgo::AddNeighborIfPossible(Position currentPosition, Position neighbo
 		neighborIndex < size &&
 		map->GetGridCell(neighborPosition.X(), neighborPosition.Y()) == CELL_FREE)
 	{
-		(*graph)[currentIndex]->AddNeighbor((*graph)[neighborIndex]);
+		(*graph)[currentIndex]->addNeighbor((*graph)[neighborIndex]);
 	}
 }
 
-AStarAlgo::~AStarAlgo()
+PathPlanner::~PathPlanner()
 {
 }

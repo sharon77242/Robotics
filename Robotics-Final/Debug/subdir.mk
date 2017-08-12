@@ -4,33 +4,33 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../AStarAlgo.cpp \
+../ConfigurationManager.cpp \
 ../Map.cpp \
 ../MatrixHelper.cpp \
-../ParametersReader.cpp \
 ../ParticlesManager.cpp \
+../PathPlanner.cpp \
 ../RobotController.cpp \
 ../RobotMovement.cpp \
 ../WaypointManager.cpp \
 ../main.cpp 
 
 OBJS += \
-./AStarAlgo.o \
+./ConfigurationManager.o \
 ./Map.o \
 ./MatrixHelper.o \
-./ParametersReader.o \
 ./ParticlesManager.o \
+./PathPlanner.o \
 ./RobotController.o \
 ./RobotMovement.o \
 ./WaypointManager.o \
 ./main.o 
 
 CPP_DEPS += \
-./AStarAlgo.d \
+./ConfigurationManager.d \
 ./Map.d \
 ./MatrixHelper.d \
-./ParametersReader.d \
 ./ParticlesManager.d \
+./PathPlanner.d \
 ./RobotController.d \
 ./RobotMovement.d \
 ./WaypointManager.d \

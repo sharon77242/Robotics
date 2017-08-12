@@ -1,7 +1,7 @@
 #include "ParticlesManager.h"
 using namespace std;
 
-ParticlesManager::ParticlesManager(Hamster *hamster, Map *map) : _hamster(hamster), _map(map)
+ParticlesManager::ParticlesManager(Hamster& hamster, Map *map) : _hamster(hamster), _map(map)
 {
 }
 
@@ -62,7 +62,7 @@ void ParticlesManager::SetToRandomCloseToPoint(Particle *particle, Position *fir
 }
 double ParticlesManager::CalculateBelief(Particle *particle, double deltaX, double deltaY, double deltaYaw)
 {
-	LidarScan ld = _hamster->getLidarScan();
+	LidarScan ld = _hamster.getLidarScan();
 
 	int matches = 0;
 	int misses = 0;

@@ -1,5 +1,5 @@
-#ifndef PARAMETERSREADER_H_
-#define PARAMETERSREADER_H_
+#ifndef CONFIGURATIONMANAGER_H_
+#define CONFIGURATIONMANAGER_H_
 
 #include <fstream>
 #include <iostream>
@@ -10,17 +10,17 @@
 
 using namespace std;
 
-class ParametersReader {
+class ConfigurationManager {
 private:
 	map<string, string> _params;
 	string Trim(string str);
 	
 public:
-	ParametersReader(const char *path);
+	ConfigurationManager(const string& path);
 	Position* GetStartLocation();
 	Position* GetGoal();
 	int GetRobotSize();
-	virtual ~ParametersReader();
+	virtual ~ConfigurationManager();
 };
 
-#endif /* PARAMETERSREADER_H_ */
+#endif /* CONFIGURATIONMANAGER_H_ */

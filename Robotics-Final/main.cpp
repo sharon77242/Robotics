@@ -1,16 +1,17 @@
-#include "ParametersReader.h"
 #include "RobotController.h"
-const char* PARAMS_FILE = "parameters.txt";
+#include <string.h>
+#include "ConfigurationManager.h"
 
 int main() {
-	Hamster* hamster;
+	const string PARAMS_FILE = "parameters.txt";
 	try {
-		ParametersReader* reader = new ParametersReader(PARAMS_FILE);
-		hamster = new HamsterAPI::Hamster(1);
+		ConfigurationManager* reader = new ConfigurationManager(PARAMS_FILE);
+		Hamster hamster(1);
 		sleep(3);
 		RobotController* controller = new RobotController(hamster, reader);
 		controller->Start();
 		cout << "Finish. " << endl;
+
 	} catch (const HamsterAPI::HamsterError & connection_error) {
 		HamsterAPI::Log::i("Client", connection_error.what()); }
 

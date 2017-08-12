@@ -1,12 +1,12 @@
 #include "RobotController.h"
 #include "math.h"
 
-RobotController::RobotController(Hamster* hamster, ParametersReader* config){
-	_hamster = hamster;
-
+RobotController::RobotController(Hamster& hamster, ConfigurationManager* config)
+:_hamster(hamster)
+{
 	_config = config;
 
-	_occupancygrid = hamster->getSLAMMap();
+	_occupancygrid = hamster.getSLAMMap();
 
 	_map = new Map(_occupancygrid, _config->GetRobotSize(), _occupancygrid.getResolution()*1000/2);
 
@@ -29,7 +29,7 @@ void RobotController::Start(){
 	{
 		_map->DrawPath(waypoints);
 
-		while(_hamster->isConnected())
+		while(_hamster.isConnected())
 		{
 			for (std::vector<Node*>::iterator it = waypoints.begin() ; it != waypoints.end(); ++it)
 			{
@@ -45,7 +45,7 @@ vector<Node*> RobotController::CreatePathForMovement()
 {
 	Position* startingPoint = _config->GetStartLocation();
 	Position* goalPoint = _config->GetGoal();
-	AStarAlgo pp = AStarAlgo(_map);
+	PathPlanner pp = PathPlanner(_map);
 
 	return pp.AStar(startingPoint, goalPoint);
 }
@@ -67,7 +67,7 @@ vector<Node*> RobotController::CreateWayPoints(vector<Node*> path)
 void RobotController::MoveRobotToWayPoint(Node* node)
 {
 	bool arrived = false;
-	Position * p = _map->ConevrtMapPositionToGlobalPosition(node->GetLocationInMap());
+	Position * p = _map->ConevrtMapPositionToGlobalPosition(node->location);
 
 	sleep(1);
 
