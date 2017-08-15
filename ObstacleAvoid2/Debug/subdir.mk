@@ -4,41 +4,38 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../ConfigurationManager.cpp \
+../DisplayManager.cpp \
+../LocalizationManager.cpp \
 ../Map.cpp \
-../ParticlesManager.cpp \
 ../PathPlanner.cpp \
-../RobotController.cpp \
-../RobotMovement.cpp \
-../WaypointManager.cpp \
+../Robot.cpp \
+../WaypointsManger.cpp \
 ../main.cpp 
 
 OBJS += \
-./ConfigurationManager.o \
+./DisplayManager.o \
+./LocalizationManager.o \
 ./Map.o \
-./ParticlesManager.o \
 ./PathPlanner.o \
-./RobotController.o \
-./RobotMovement.o \
-./WaypointManager.o \
+./Robot.o \
+./WaypointsManger.o \
 ./main.o 
 
 CPP_DEPS += \
-./ConfigurationManager.d \
+./DisplayManager.d \
+./LocalizationManager.d \
 ./Map.d \
-./ParticlesManager.d \
 ./PathPlanner.d \
-./RobotController.d \
-./RobotMovement.d \
-./WaypointManager.d \
+./Robot.d \
+./WaypointsManger.d \
 ./main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 %.o: ../%.cpp
 	@echo 'Building file: $<'
-	@echo 'Invoking: GCC C++ Compiler'
-	g++ -D__GXX_EXPERIMENTAL_CXX0X__ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	@echo 'Invoking: Cross G++ Compiler'
+	g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

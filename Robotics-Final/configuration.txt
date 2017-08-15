@@ -1,0 +1,3 @@
+startLocation: 86 86 -60
+goal: 67 100
+robotSize: 0.3

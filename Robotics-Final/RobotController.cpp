@@ -7,7 +7,7 @@ RobotController::RobotController(Hamster& hamster, ConfigurationManager& config)
 {
 	_occupancygrid = hamster.getSLAMMap();
 
-	_map = new Map(_occupancygrid, _config.GetRobotSize(), _occupancygrid.getResolution()*1000/2);
+	_map = new Map(_occupancygrid, _config.GetRobotSize(), _occupancygrid.getResolution());
 
 	_particlesManager = new ParticlesManager(hamster, _map);
 

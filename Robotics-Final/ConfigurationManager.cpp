@@ -80,13 +80,13 @@ Position* ConfigurationManager::GetGoal()
 	return goalPos;
 }
 
-int ConfigurationManager::GetRobotSize()
+double ConfigurationManager::GetRobotSize()
 {
 	string valueStr = _params["robotSize"];
 	istringstream lineStream(valueStr);
 	Trim(valueStr);
 
-	return atoi(valueStr.c_str());
+	return atof(valueStr.c_str());
 }
 
 ConfigurationManager::~ConfigurationManager() {

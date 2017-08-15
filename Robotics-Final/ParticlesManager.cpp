@@ -34,7 +34,7 @@ Position ParticlesManager::GetRandomCellFreePosition(Position* nearPosition, flo
 			row = (nearPosition->Y() + radius * sin(angle));
 		}
 
-	} while (_map->GetRotatedGrid()->getCell(row, col) != CELL_FREE);
+	} while (_map->GetRotatedGrid().getCell(row, col) != CELL_FREE);
 
 	return Position(col, row, yaw);
 
@@ -79,11 +79,11 @@ double ParticlesManager::CalculateBelief(Particle *particle, double deltaX, doub
 
 			Position tempMapPosition = _map->ConevrtGlobalPositionToMapPosition(obstaclePosition);
 
-			if (_map->GetRotatedGrid()->getCell(round(tempMapPosition.Y()), round(tempMapPosition.X())) == CELL_OCCUPIED)
+			if (_map->GetRotatedGrid().getCell(round(tempMapPosition.Y()), round(tempMapPosition.X())) == CELL_OCCUPIED)
 			{
 				matches++;
 			}
-			else if (_map->GetRotatedGrid()->getCell(round(tempMapPosition.Y()), round(tempMapPosition.X())) == CELL_FREE)
+			else if (_map->GetRotatedGrid().getCell(round(tempMapPosition.Y()), round(tempMapPosition.X())) == CELL_FREE)
 			{
 				misses++;
 			}
@@ -113,7 +113,7 @@ void ParticlesManager::ResampleParticles(double deltaX, double deltaY, double de
 
 		particle->belief = CalculateBelief(particle, deltaX, deltaY, deltaYaw);
 
-		if (_map->GetRotatedGrid()->getCell(particle->mPosition.Y(), particle->mPosition.X()) != CELL_FREE)
+		if (_map->GetRotatedGrid().getCell(particle->mPosition.Y(), particle->mPosition.X()) != CELL_FREE)
 		{
 			if (_particlesVector[i]->belief < BELIEF_THRESHOLD)
 			{

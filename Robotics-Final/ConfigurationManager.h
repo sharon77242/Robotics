@@ -19,7 +19,7 @@ public:
 	ConfigurationManager(const string& path);
 	Position GetStartLocation();
 	Position* GetGoal();
-	int GetRobotSize();
+	double GetRobotSize();
 	virtual ~ConfigurationManager();
 };
 

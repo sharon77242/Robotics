@@ -11,19 +11,20 @@
 #include <opencv/cxcore.h>
 #include <opencv/cvwimage.h>
 
-#include "MatrixHelper.h"
 #include "Models/Node.h"
 #include "Models/Position.h"
 #include "Models/Particle.h"
 
 using HamsterAPI::OccupancyGrid;
+using namespace cv;
+using std::vector;
 
 class Map {
 public:
-	Map(const OccupancyGrid& grid, int robot_size, float resolution);
+	Map(const OccupancyGrid& grid, double robot_size, float resolution);
 
 	Mat* GetInflatedMatrix();
-	const OccupancyGrid * GetRotatedGrid();
+	const OccupancyGrid& GetRotatedGrid();
 
 	HamsterAPI::Cell GetGridCell(int x, int y)const;
 
@@ -39,29 +40,29 @@ public:
 	Position ConevrtMapPositionToGlobalPosition(Position p);
 	Position ConevrtGlobalPositionToMapPosition(Position p);
 
-	float convertPixelToMeter(float inPixel);
-	float convertMeterToPixel(float inMeter);
-
 private:
-	const OccupancyGrid _originalOccupancyGrid;
-	const OccupancyGrid* _inflatedOccupancyGrid;
-	const OccupancyGrid* _rotatedOccupancyGrid;
-
-	const int _robot_size;
+	const double _robotSize;
 	const float _resolution;
-	int _cube_padding_size;
-	std::map<NodeType, Vec3b> _node_type_color;
+	int _cubePaddingSize;
+	std::map<NodeType, Vec3b> _nodeTypeColor;
+
+	const OccupancyGrid _originalOccupancyGrid;
+	const OccupancyGrid _rotatedOccupancyGrid;
+	OccupancyGrid _inflatedOccupancyGrid;
 
 	Mat ConvertGridToMatrix(OccupancyGrid ogrid);
-	OccupancyGrid* CreateRotatedGrid(OccupancyGrid ogrid);
+	OccupancyGrid CreateRotatedGrid(OccupancyGrid ogrid);
 
-	void CopyToMat(OccupancyGrid* ogrid);
+	OccupancyGrid convertToCoarseGrid(OccupancyGrid& ogrid);
+
 	void SetCellColorInMatrix(Mat &matrix, int row, int col, HamsterAPI::Cell cell);
 	void SetColorInMatrixArea(Mat& matrix, int row, int col, int radius, Vec3b color);
 	void ShowMap(std::string windowName, Mat mat);
-	OccupancyGrid* CreateInflatedGrid(const OccupancyGrid& ogrid, int cube_padding_size);
-	Mat * CopyToMat(const OccupancyGrid* ogrid);
-	void InitNodeTypeColors();
+	OccupancyGrid CreateInflatedGrid(const OccupancyGrid& ogrid, int cube_padding_size);
+	Mat* CopyToMat(const OccupancyGrid& ogrid);
+	std::map<NodeType, Vec3b> nodeTypeColors();
+	void TranslateMat(Mat &mat, int offsetx, int offsety);
+	void RotateMat(Mat &mat, double rotationAngle);
 };
 
 #endif /* MAP_H_ */

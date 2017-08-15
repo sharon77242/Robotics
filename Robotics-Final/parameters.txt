@@ -1,3 +1,0 @@
-startLocation: 512 512 -60
-goal: 400 600
-robotSize: 20
