@@ -5,17 +5,17 @@ ParticlesManager::ParticlesManager(Hamster& hamster, Map *map) : _hamster(hamste
 {
 }
 
-void ParticlesManager::InitializeParticles(Position *firstMapPos)
+void ParticlesManager::InitializeParticles(Position firstMapPos)
 {
 	_particlesVector.resize(NUM_OF_PARTICLES);
 
-	for (int i = 0; i < _particlesVector.size(); i++)
+	for (size_t i = 0; i < _particlesVector.size(); i++)
 	{
 		_particlesVector[i] = new Particle();
 		SetToRandomCloseToPoint(_particlesVector[i], firstMapPos);
 	}
 }
-Position* ParticlesManager::GetRandomCellFreePosition(Position* nearPosition, float yaw){
+Position ParticlesManager::GetRandomCellFreePosition(Position* nearPosition, float yaw){
 
 	int row, col, angle, radius;
 
@@ -36,7 +36,7 @@ Position* ParticlesManager::GetRandomCellFreePosition(Position* nearPosition, fl
 
 	} while (_map->GetRotatedGrid()->getCell(row, col) != CELL_FREE);
 
-	return new Position(col, row, yaw);
+	return Position(col, row, yaw);
 
 }
 void ParticlesManager::SetToRandomLocation(Particle *particle, float beliefYaw)
@@ -47,17 +47,17 @@ void ParticlesManager::SetToRandomLocation(Particle *particle, float beliefYaw)
 	particle->gPosition = _map->ConevrtMapPositionToGlobalPosition(particle->mPosition);
 }
 
-void ParticlesManager::SetToRandomCloseToPoint(Particle *particle, Position *firstPosition)
+void ParticlesManager::SetToRandomCloseToPoint(Particle *particle, Position firstPosition)
 {
 	//range of 15 degrees
-	float randYaw = rand() % (30 + 1) + firstPosition->Yaw() - 15;
+	float randYaw = rand() % (30 + 1) + firstPosition.Heading() - 15;
 	if (randYaw < 0)
 		randYaw += 360;
 	else if (randYaw > 360)
 	{
 		randYaw -= 360;
 	}
-	particle->mPosition = GetRandomCellFreePosition(firstPosition, randYaw);//new Position(col, row, randYaw);
+	particle->mPosition = GetRandomCellFreePosition(&firstPosition, randYaw);//new Position(col, row, randYaw);
 	particle->gPosition = _map->ConevrtMapPositionToGlobalPosition(particle->mPosition);
 }
 double ParticlesManager::CalculateBelief(Particle *particle, double deltaX, double deltaY, double deltaYaw)
@@ -67,29 +67,26 @@ double ParticlesManager::CalculateBelief(Particle *particle, double deltaX, doub
 	int matches = 0;
 	int misses = 0;
 
-	for (int i = 0; i < ld.getScanSize(); i++)
+	for (size_t i = 0; i < ld.getScanSize(); ++i)
 	{
 		// Checks if the scan hits an object.
 		if (ld.getDistance(i) < ld.getMaxRange() - 0.001)
 		{
 			double currentAngle = ld.getScanAngleIncrement() * i * DEG2RAD;
-			double obstacleX = particle->gPosition->X() + ld.getDistance(i) * cos(currentAngle + (particle->gPosition->Yaw() - 180) * DEG2RAD);
-			double obstacleY = particle->gPosition->Y() + ld.getDistance(i) * sin(currentAngle + (particle->gPosition->Yaw() - 180) * DEG2RAD);
-			Position *obstaclePosition = new Position(obstacleX, obstacleY, i);
+			double obstacleX = particle->gPosition.X() + ld.getDistance(i) * cos(currentAngle + (particle->gPosition.Heading() - 180) * DEG2RAD);
+			double obstacleY = particle->gPosition.Y() + ld.getDistance(i) * sin(currentAngle + (particle->gPosition.Heading() - 180) * DEG2RAD);
+			Position obstaclePosition (obstacleX, obstacleY, i);
 
-			Position *tempMapPosition = _map->ConevrtGlobalPositionToMapPosition(obstaclePosition);
+			Position tempMapPosition = _map->ConevrtGlobalPositionToMapPosition(obstaclePosition);
 
-			if (_map->GetRotatedGrid()->getCell(round(tempMapPosition->Y()), round(tempMapPosition->X())) == CELL_OCCUPIED)
+			if (_map->GetRotatedGrid()->getCell(round(tempMapPosition.Y()), round(tempMapPosition.X())) == CELL_OCCUPIED)
 			{
 				matches++;
 			}
-			else if (_map->GetRotatedGrid()->getCell(round(tempMapPosition->Y()), round(tempMapPosition->X())) == CELL_FREE)
+			else if (_map->GetRotatedGrid()->getCell(round(tempMapPosition.Y()), round(tempMapPosition.X())) == CELL_FREE)
 			{
 				misses++;
 			}
-
-			delete (obstaclePosition);
-			delete (tempMapPosition);
 		}
 	}
 
@@ -104,23 +101,23 @@ double ParticlesManager::getNextBelief (Particle *particle, int misses, int matc
 
 void ParticlesManager::ResampleParticles(double deltaX, double deltaY, double deltaYaw)
 {
-	for (int i = 0; i < _particlesVector.size(); i++)
+	for (size_t i = 0; i < _particlesVector.size(); ++i)
 	{
 		Particle *particle = _particlesVector[i];
 
-		particle->gPosition->Update(particle->gPosition->X() + deltaX,
-										 particle->gPosition->Y() + deltaY,
-										 particle->gPosition->Yaw() + deltaYaw);
+		particle->gPosition.Update(particle->gPosition.X() + deltaX,
+										 particle->gPosition.Y() + deltaY,
+										 particle->gPosition.Heading() + deltaYaw);
 
 		particle->mPosition = _map->ConevrtGlobalPositionToMapPosition(particle->gPosition);
 
 		particle->belief = CalculateBelief(particle, deltaX, deltaY, deltaYaw);
 
-		if (_map->GetRotatedGrid()->getCell(particle->mPosition->Y(), particle->mPosition->X()) != CELL_FREE)
+		if (_map->GetRotatedGrid()->getCell(particle->mPosition.Y(), particle->mPosition.X()) != CELL_FREE)
 		{
 			if (_particlesVector[i]->belief < BELIEF_THRESHOLD)
 			{
-				SetToRandomLocation(particle, _particlesVector[i]->gPosition->Yaw());
+				SetToRandomLocation(particle, _particlesVector[i]->gPosition.Heading());
 			}
 		}
 	}
@@ -156,7 +153,7 @@ void ParticlesManager::EnhanceParticles()
 
 		float randYaw = rand() % 360;
 
-		_particlesVector[particleToReplaceIndex]->mPosition = GetRandomCellFreePosition(_particlesVector[goodParticleIndex]->mPosition, randYaw);
+		_particlesVector[particleToReplaceIndex]->mPosition = GetRandomCellFreePosition(&(_particlesVector[goodParticleIndex]->mPosition), randYaw);
 		_particlesVector[particleToReplaceIndex]->gPosition = _map->ConevrtMapPositionToGlobalPosition(_particlesVector[particleToReplaceIndex]->mPosition);
 		_particlesVector[particleToReplaceIndex]->belief = CalculateBelief(_particlesVector[particleToReplaceIndex], 0, 0, 0);
 	}
@@ -167,7 +164,7 @@ vector<Particle *> ParticlesManager::GetParticles() const
 	return _particlesVector;
 }
 
-Position *ParticlesManager::GetBestParticlePosition()
+Position ParticlesManager::GetBestParticlePosition()
 {
 	std::sort(this->_particlesVector.begin(), this->_particlesVector.end(), biggerBeliefComparator);
 	return this->_particlesVector[0]->gPosition;

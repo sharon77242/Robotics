@@ -2,17 +2,17 @@
 #define POSITION_H_
 
 class Position {
-private:
-	double _yaw;
-	double _x;
-	double _y;
 public:
-	double Yaw();
+	Position() = default;
+	Position(double x, double y, double heading = 0);
+	double Heading();
 	double X();
 	double Y();
-	void Update(double x, double y, double yaw = 0);
-	Position(double x, double y, double yaw = 0);
-	virtual ~Position();
+	void Update(double x, double y, double heading = 0);
+private:
+	double Heading_ = 0;
+	double x_ = 0;
+	double y_ = 0;
 };
 
 #endif /* POSITION_H_ */

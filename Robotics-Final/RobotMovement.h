@@ -26,19 +26,19 @@ private:
 	ParticlesManager * _particalesManager;
 	Position * _lastPosition;
 	MovementMode _movementMode;
-	void GetDelts(Position * currentLocation, double & deltaXInPixel, double & deltaYInPixel, double & deltaYawInDegree);
+	void GetDelts(Position currentLocation, double & deltaXInPixel, double & deltaYInPixel, double & deltaYawInDegree);
 	void PrintLocationOfRobot(const HamsterAPI::Hamster& hamster);
-	float CalculateAngleMovement(Position * currentPosition, Position * targetPosition);
+	float CalculateAngleMovement(Position currentPosition, Position targetPosition);
 	float NormalizeAngle(float angle);
-	bool IsArrived(Position * currentPosition, Position * targetPosition);
+	bool IsArrived(Position currentPosition, Position targetPosition);
 	float NormalizeHeading(float heading);
 	bool ObstaclesInFrontOfRobot(HamsterAPI::LidarScan * ld);
-	Position * GetCurrentPosition (Hamster& hamster);
+	Position GetCurrentPosition (Hamster& hamster);
 
 public:
-	RobotMovement(Map * map, ParticlesManager * particlesManager, Position * startPosition, MovementMode movementMode);
+	RobotMovement(Map * map, ParticlesManager * particlesManager, Position startPosition, MovementMode movementMode);
 	virtual ~RobotMovement();
-	bool MoveRobotToWaypoint(HamsterAPI::Hamster& hamster, Position * positionTarget);
+	bool MoveRobotToWaypoint(HamsterAPI::Hamster& hamster, Position positionTarget);
 };
 
 #endif /* ROBOTMOVEMENT_H_ */

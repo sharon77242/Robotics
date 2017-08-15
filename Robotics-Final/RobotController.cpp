@@ -1,23 +1,21 @@
 #include "RobotController.h"
 #include "math.h"
 
-RobotController::RobotController(Hamster& hamster, ConfigurationManager* config)
+RobotController::RobotController(Hamster& hamster, ConfigurationManager& config)
 :_hamster(hamster)
+, _config(config)
 {
-	_config = config;
-
 	_occupancygrid = hamster.getSLAMMap();
 
-	_map = new Map(_occupancygrid, _config->GetRobotSize(), _occupancygrid.getResolution()*1000/2);
+	_map = new Map(_occupancygrid, _config.GetRobotSize(), _occupancygrid.getResolution()*1000/2);
 
 	_particlesManager = new ParticlesManager(hamster, _map);
 
 	_robotMovement = new RobotMovement(
 			_map,
 			_particlesManager,
-			_map->ConevrtMapPositionToGlobalPosition(_config->GetStartLocation()),
-			MovementPose
-	);
+			_map->ConevrtMapPositionToGlobalPosition(_config.GetStartLocation()),
+			MovementPose);
 
 	_waypointsManager = new WaypointManager(_map);
 }
@@ -43,9 +41,9 @@ void RobotController::Start(){
 
 vector<Node*> RobotController::CreatePathForMovement()
 {
-	Position* startingPoint = _config->GetStartLocation();
-	Position* goalPoint = _config->GetGoal();
-	PathPlanner pp = PathPlanner(_map);
+	Position startingPoint = _config.GetStartLocation();
+	Position* goalPoint = _config.GetGoal();
+	PathPlanner pp(_map);
 
 	return pp.AStar(startingPoint, goalPoint);
 }
@@ -67,7 +65,7 @@ vector<Node*> RobotController::CreateWayPoints(vector<Node*> path)
 void RobotController::MoveRobotToWayPoint(Node* node)
 {
 	bool arrived = false;
-	Position * p = _map->ConevrtMapPositionToGlobalPosition(node->location);
+	Position p = _map->ConevrtMapPositionToGlobalPosition(node->location);
 
 	sleep(1);
 

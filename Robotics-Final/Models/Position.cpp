@@ -1,34 +1,29 @@
 #include "Position.h"
 
 Position::Position(double x, double y, double yaw) {
-	_x = x;
-	_y = y;
-	_yaw = yaw;
+	x_ = x;
+	y_ = y;
+	Heading_ = yaw;
 }
 
 void Position::Update(double x, double y, double yaw)
 {
-	_x = x;
-	_y = y;
-	_yaw = yaw;
+	x_ = x;
+	y_ = y;
+	Heading_ = yaw;
 }
 
 double Position::X()
 {
-	return _x;
+	return x_;
 }
 
 double Position::Y()
 {
-	return _y;
+	return y_;
 }
 
-double Position::Yaw()
+double Position::Heading()
 {
-	return _yaw;
+	return Heading_;
 }
-
-Position::~Position() {
-	// TODO Auto-generated destructor stub
-}
-

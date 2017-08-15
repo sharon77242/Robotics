@@ -5,8 +5,8 @@
 
 class Particle {
 public:
-	Position * mPosition;
-	Position * gPosition;
+	Position mPosition;
+	Position gPosition;
 	double belief;
 };
 

@@ -17,9 +17,9 @@ PathPlanner::PathPlanner(Map * map)
 }
 
 // A* algorithm
-vector<Node *> PathPlanner::AStar(Position * start, Position * goal)
+vector<Node *> PathPlanner::AStar(Position start, Position * goal)
 {
-	Node *startNode = _graph[(_graphWidth * start->Y()) + start->X()];
+	Node *startNode = _graph[(_graphWidth * start.Y()) + start.X()];
 	Node *goalNode = _graph[(_graphWidth * goal->Y()) + goal->X()];
 	map<Node *, Node *> cameFrom; // save for each Node we visit the Node we came from
 	priority_queue<Node *, vector<Node *>, PathComparison> openset;
@@ -73,11 +73,11 @@ vector<Node *> PathPlanner::AStar(Position * start, Position * goal)
 // This is the heuristic function for the A* algorithm
 double PathPlanner::GetDistanceBetweenNodes(Node *start, Node *goal)
 {
-	Position *startLocation = start->location;
-	Position *goalLocation = goal->location;
+	Position startLocation = start->location;
+	Position goalLocation = goal->location;
 
-	double a2 = pow(goalLocation->X() - startLocation->X(), 2);
-	double b2 = pow(goalLocation->Y() - startLocation->Y(), 2);
+	double a2 = pow(goalLocation.X() - startLocation.X(), 2);
+	double b2 = pow(goalLocation.Y() - startLocation.Y(), 2);
 	double dist = sqrt(a2 + b2);
 	return dist;
 }
@@ -109,9 +109,9 @@ vector<Node *> PathPlanner::ConvertMapToGraph(Map *map)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			Position *currentPosition = new Position(j, i);
+			Position currentPosition (j, i);
 			Node *v = new Node(currentPosition, PATH);
-			int initialCost = PathPlanner::GetGaussianWeight(*currentPosition, map, GAUSSIAN_RADIUS, OCCUPIED_WEIGHT);
+			int initialCost = PathPlanner::GetGaussianWeight(currentPosition, map, GAUSSIAN_RADIUS, OCCUPIED_WEIGHT);
 			v->initialCost = initialCost;
 			graph[(i * width) + j] = v;
 		}

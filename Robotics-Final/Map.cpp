@@ -39,12 +39,12 @@ void Map::InitNodeTypeColors(){
 	_node_type_color.insert(NodeTypeRGB(PATH_END_POINT,GREEN));
 }
 
-unsigned int Map::GetHeight()
+size_t Map::GetHeight()
 {
 	return _originalOccupancyGrid.getHeight();
 }
 
-unsigned int Map::GetWidth()
+size_t Map::GetWidth()
 {
 	return _originalOccupancyGrid.getWidth();
 }
@@ -140,16 +140,16 @@ void Map::DrawParticles(vector<Particle *> particles)
 
 	// Draw the low-belief particles in red color
 	for (; i > best; i--) {
-		int x = particles[i]->mPosition->X();
-		int y = particles[i]->mPosition->Y();
+		int x = particles[i]->mPosition.X();
+		int y = particles[i]->mPosition.Y();
 
 		SetColorInMatrixArea(matrix, y, x, 1, RED);
 	}
 
 	// Drawing the top 5 particles in green color
 	for (; i >= 0; i--) {
-		int x = particles[i]->mPosition->X();
-		int y = particles[i]->mPosition->Y();
+		int x = particles[i]->mPosition.X();
+		int y = particles[i]->mPosition.Y();
 
 		SetColorInMatrixArea(matrix, y, x, 1, GREEN);
 	}
@@ -205,9 +205,9 @@ void Map::SetCellColorInMatrix(Mat &matrix, int row, int col, Cell cell)
 
 void Map::SetColorInMatrixArea(Mat &matrix, int row, int col, int radius, Vec3b color)
 {
-	for (int i = row - radius; i < row + radius && i >= 0 && i < GetHeight(); i++)
+	for (size_t i = row - radius; i < row + radius && i >= 0 && i < GetHeight(); ++i)
 	{
-		for (int j = col - radius; j < col + radius && j >= 0 && i < GetWidth(); j++)
+		for (size_t j = col - radius; j < col + radius && j >= 0 && i < GetWidth(); ++j)
 		{
 			matrix.at<Vec3b>(i, j) = color;
 		}
@@ -219,9 +219,9 @@ Mat Map::ConvertGridToMatrix(OccupancyGrid ogrid)
 	Mat matrix = Mat(ogrid.getHeight(),
 					 ogrid.getWidth(), CV_8UC3);
 
-	for (unsigned int row = 0; row < ogrid.getHeight(); row++)
+	for (size_t row = 0; row < ogrid.getHeight(); ++row)
 	{
-		for (unsigned int col = 0; col < ogrid.getWidth(); col++)
+		for (size_t col = 0; col < ogrid.getWidth(); ++col)
 		{
 			SetCellColorInMatrix(matrix, row, col, ogrid.getCell(row, col));
 		}
@@ -236,35 +236,35 @@ void Map::DrawPath(vector<Node *> nodes)
 	Mat mat = ConvertGridToMatrix(*_inflatedOccupancyGrid);
 	for (unsigned int i = 0; i < nodes.size(); i++)
 	{
-		Position *p = nodes[i]->location;
-		SetColorInMatrixArea(mat, p->Y(), p->X(), _cube_padding_size,
+		Position p = nodes[i]->location;
+		SetColorInMatrixArea(mat, p.Y(), p.X(), _cube_padding_size,
 							_node_type_color[nodes[i]->type]);
 	}
 
 	if(nodes.size()!=0){
-	Position *start = nodes[0]->location;
-	SetColorInMatrixArea(mat, start->Y(), start->X(), _cube_padding_size, BLUE);
+	Position start = nodes[0]->location;
+	SetColorInMatrixArea(mat, start.Y(), start.X(), _cube_padding_size, BLUE);
 
-	Position *end = nodes[nodes.size() - 1]->location;
-	SetColorInMatrixArea(mat, end->Y(), end->X(), _cube_padding_size, GREEN);
+	Position end = nodes[nodes.size() - 1]->location;
+	SetColorInMatrixArea(mat, end.Y(), end.X(), _cube_padding_size, GREEN);
 	}
 
 	ShowMap(PATH_MAP_VIEW, mat);
 }
 
-Position* Map::ConevrtMapPositionToGlobalPosition(Position * p)
+Position Map::ConevrtMapPositionToGlobalPosition(Position p)
 {
-	float newX = (p->X() - (double)(GetWidth() / 2)) * _originalOccupancyGrid.getResolution();
-	float newY = -(p->Y() - (double)(GetHeight() / 2)) * _originalOccupancyGrid.getResolution();
-	return new Position(newX, newY, p->Yaw());
+	float newX = (p.X() - (double)(GetWidth() / 2)) * _originalOccupancyGrid.getResolution();
+	float newY = -(p.Y() - (double)(GetHeight() / 2)) * _originalOccupancyGrid.getResolution();
+	return Position(newX, newY, p.Heading());
 
 }
 
-Position* Map::ConevrtGlobalPositionToMapPosition(Position * p)
+Position Map::ConevrtGlobalPositionToMapPosition(Position p)
 {
-	float newX = p->X() / _originalOccupancyGrid.getResolution() + (double)(GetWidth() / 2);
-	float newY = -p->Y() / _originalOccupancyGrid.getResolution() + (double)(GetHeight() / 2);
-	return new Position(newX, newY, p->Yaw());
+	float newX = p.X() / _originalOccupancyGrid.getResolution() + (double)(GetWidth() / 2);
+	float newY = -p.Y() / _originalOccupancyGrid.getResolution() + (double)(GetHeight() / 2);
+	return Position(newX, newY, p.Heading());
 }
 
 void Map::ShowMap(string windowName, Mat matrix)

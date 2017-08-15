@@ -25,7 +25,7 @@ public:
 	PathPlanner(Map *map);
 	virtual ~PathPlanner();
 
-	vector<Node *> AStar(Position *start, Position *goal);
+	vector<Node *> AStar(Position start, Position *goal);
 
   private:
 	vector<Node*> _graph;

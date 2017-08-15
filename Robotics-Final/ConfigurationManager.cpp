@@ -46,7 +46,7 @@ string ConfigurationManager::Trim(string str)
 	return str;
 }
 
-Position* ConfigurationManager::GetStartLocation()
+Position ConfigurationManager::GetStartLocation()
 {
 	string valueStr = _params["startLocation"];
 	istringstream lineStream(valueStr);
@@ -61,8 +61,7 @@ Position* ConfigurationManager::GetStartLocation()
 	Trim(y);
 	Trim(yaw);
 
-	Position *robotPos = new Position(atof(x.c_str()), atof(y.c_str()), atof(yaw.c_str()));
-	return robotPos;
+	return Position (atof(x.c_str()), atof(y.c_str()), atof(yaw.c_str()));
 }
 
 Position* ConfigurationManager::GetGoal()

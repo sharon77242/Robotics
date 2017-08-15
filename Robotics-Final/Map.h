@@ -16,7 +16,6 @@
 #include "Models/Position.h"
 #include "Models/Particle.h"
 
-using HamsterAPI::Cell;
 using HamsterAPI::OccupancyGrid;
 
 class Map {
@@ -34,11 +33,11 @@ public:
 	void DrawPath(std::vector<Node*> nodes);
 	void DrawParticles(vector<Particle*> particles);
 
-	unsigned int GetHeight();
-	unsigned int GetWidth();
+	std::size_t GetHeight();
+	std::size_t GetWidth();
 
-	Position* ConevrtMapPositionToGlobalPosition(Position * p);
-	Position* ConevrtGlobalPositionToMapPosition(Position * p);
+	Position ConevrtMapPositionToGlobalPosition(Position p);
+	Position ConevrtGlobalPositionToMapPosition(Position p);
 
 	float convertPixelToMeter(float inPixel);
 	float convertMeterToPixel(float inMeter);
@@ -57,7 +56,7 @@ private:
 	OccupancyGrid* CreateRotatedGrid(OccupancyGrid ogrid);
 
 	void CopyToMat(OccupancyGrid* ogrid);
-	void SetCellColorInMatrix(Mat &matrix, int row, int col, Cell cell);
+	void SetCellColorInMatrix(Mat &matrix, int row, int col, HamsterAPI::Cell cell);
 	void SetColorInMatrixArea(Mat& matrix, int row, int col, int radius, Vec3b color);
 	void ShowMap(std::string windowName, Mat mat);
 	OccupancyGrid* CreateInflatedGrid(const OccupancyGrid& ogrid, int cube_padding_size);

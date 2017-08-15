@@ -15,7 +15,7 @@ enum NodeType{
 };
 
 struct Node {
-	Node(Position *location, NodeType type);
+	Node(Position location, NodeType type);
 
 	void addNeighbor(Node *neighbor);
 	double calculateF();
@@ -25,7 +25,7 @@ struct Node {
 	double h;
 	// Cost from the beginning
 	double g;
-	Position * location;
+	Position location;
 	std::vector<Node*> adj;
 	const NodeType type;
 

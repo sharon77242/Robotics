@@ -20,9 +20,9 @@ using namespace HamsterAPI;
 class ParticlesManager {
 public:
 	ParticlesManager(Hamster& hamster, Map * map);
-	void InitializeParticles(Position * firstMapPos);
+	void InitializeParticles(Position firstMapPos);
 	void ResampleParticles(double deltaX, double deltaY, double deltaYaw);
-	Position * GetBestParticlePosition();
+	Position GetBestParticlePosition();
 
 	vector<Particle *> GetParticles() const;
 
@@ -43,9 +43,9 @@ private:
 	}biggerBeliefComparator;
 
 	void EnhanceParticles();
-	Position* GetRandomCellFreePosition(Position* nearPosition = NULL, float yaw =0);
+	Position GetRandomCellFreePosition(Position* nearPosition = NULL, float yaw =0);
 	void SetToRandomLocation(Particle *particle, float beliefYaw);
-	void SetToRandomCloseToPoint(Particle *particle, Position * firstPosition);
+	void SetToRandomCloseToPoint(Particle *particle, Position firstPosition);
 	double getNextBelief (Particle* particle, int misses, int matches, double deltaX, double deltaY, double deltaYaw);
 
 

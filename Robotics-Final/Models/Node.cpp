@@ -13,7 +13,7 @@ void Node::addNeighbor(Node *neighbor)
 	adj.push_back(neighbor);
 }
 
-Node::Node(Position *location, NodeType type)
+Node::Node(Position location, NodeType type)
 :initialCost(0)
 ,h(-1)
 ,g(-1)

@@ -17,7 +17,7 @@ private:
 	
 public:
 	ConfigurationManager(const string& path);
-	Position* GetStartLocation();
+	Position GetStartLocation();
 	Position* GetGoal();
 	int GetRobotSize();
 	virtual ~ConfigurationManager();

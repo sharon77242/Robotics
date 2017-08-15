@@ -1,11 +1,11 @@
 #include "RobotMovement.h"
 
-RobotMovement::RobotMovement(Map * map, ParticlesManager * particlesManager, Position* startPosition, MovementMode movementMode)
+RobotMovement::RobotMovement(Map * map, ParticlesManager * particlesManager, Position startPosition, MovementMode movementMode)
 	: _map(map), _particalesManager(particlesManager), _movementMode(movementMode){
 
-	_lastPosition = new Position(startPosition->X(),
-								startPosition->Y(),
-								startPosition->Yaw());
+	_lastPosition = new Position(startPosition.X(),
+								startPosition.Y(),
+								startPosition.Heading());
 
 	_particalesManager->InitializeParticles(_map->ConevrtGlobalPositionToMapPosition(startPosition));
 }
@@ -13,18 +13,18 @@ RobotMovement::RobotMovement(Map * map, ParticlesManager * particlesManager, Pos
 RobotMovement::~RobotMovement() {
 }
 
-void RobotMovement::GetDelts(Position * currentLocation, double &deltaXInPixel,
+void RobotMovement::GetDelts(Position currentLocation, double &deltaXInPixel,
 		double &deltaYInPixel, double &deltaYawInDegree)
 {
-	deltaXInPixel = currentLocation->X() - _lastPosition->X();
-	deltaYInPixel = currentLocation->Y() - _lastPosition->Y();
-	deltaYawInDegree = NormalizeHeading(currentLocation->Yaw() - _lastPosition->Yaw());
+	deltaXInPixel = currentLocation.X() - _lastPosition->X();
+	deltaYInPixel = currentLocation.Y() - _lastPosition->Y();
+	deltaYawInDegree = NormalizeHeading(currentLocation.Heading() - _lastPosition->Heading());
 
-	this->_lastPosition->Update(currentLocation->X(), currentLocation->Y(), currentLocation->Yaw());
+	this->_lastPosition->Update(currentLocation.X(), currentLocation.Y(), currentLocation.Heading());
 }
 
 // The function returns true if the robot arrive to the waypoint, else false.
-bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster& hamster, Position * positionTarget)
+bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster& hamster, Position positionTarget)
 {
 	try {
 		double deltaX;
@@ -32,7 +32,7 @@ bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster& hamster, Position *
 		double deltaYaw;
 
 		sleep(0.3);
-		Position * currentLocation = this->GetCurrentPosition(hamster);
+		Position currentLocation = this->GetCurrentPosition(hamster);
 		float turnAngle = CalculateAngleMovement(currentLocation, positionTarget);
 
 		if(IsArrived(currentLocation, positionTarget))
@@ -88,23 +88,23 @@ void RobotMovement::PrintLocationOfRobot(const HamsterAPI::Hamster& hamster){
 	cout << "Robot Is At:  " << currentLocation.getX() << ", " << currentLocation.getY() << "  , Heading:  " << currentLocation.getHeading() << endl;
 }
 
-float RobotMovement::CalculateAngleMovement(Position * currentPosition, Position * targetPosition){
-	float radians = atan2(targetPosition->Y() - currentPosition->Y(), targetPosition->X() - currentPosition->X());
+float RobotMovement::CalculateAngleMovement(Position currentPosition, Position targetPosition){
+	float radians = atan2(targetPosition.Y() - currentPosition.Y(), targetPosition.X() - currentPosition.X());
 	float angle  = radians * (180.0/PI);
 
 	angle = NormalizeAngle(angle);
 
-	float turnAngle = angle - currentPosition->Yaw();
+	float turnAngle = angle - currentPosition.Heading();
 	turnAngle = NormalizeAngle(turnAngle);
 
 	return turnAngle;
 }
 
-bool RobotMovement::IsArrived(Position * currentPosition, Position * targetPosition){
-	return ((currentPosition->X() > targetPosition->X() - RANGE_THRESHOLD) &&
-		(currentPosition->X() < targetPosition->X() + RANGE_THRESHOLD) &&
-		(currentPosition->Y() > targetPosition->Y() - RANGE_THRESHOLD) &&
-		(currentPosition->Y() < targetPosition->Y() + RANGE_THRESHOLD));
+bool RobotMovement::IsArrived(Position currentPosition, Position targetPosition){
+	return ((currentPosition.X() > targetPosition.X() - RANGE_THRESHOLD) &&
+		(currentPosition.X() < targetPosition.X() + RANGE_THRESHOLD) &&
+		(currentPosition.Y() > targetPosition.Y() - RANGE_THRESHOLD) &&
+		(currentPosition.Y() < targetPosition.Y() + RANGE_THRESHOLD));
 }
 
 float RobotMovement::NormalizeAngle(float angle){
@@ -152,7 +152,7 @@ bool RobotMovement::ObstaclesInFrontOfRobot(HamsterAPI::LidarScan * ld){
 	return obstaclesExists;
 }
 
-Position * RobotMovement::GetCurrentPosition (Hamster& hamster){
+Position RobotMovement::GetCurrentPosition (Hamster& hamster){
 	sleep(0.1);
 
 	if(_movementMode == MovementParticles)
@@ -162,8 +162,6 @@ Position * RobotMovement::GetCurrentPosition (Hamster& hamster){
 	else
 	{
 		Pose realPosition = hamster.getPose();
-		Position * p = new Position(realPosition.getX(),realPosition.getY(), realPosition.getHeading());
-
-		return p;
+		return Position(realPosition.getX(),realPosition.getY(), realPosition.getHeading());
 	}
 }

@@ -15,7 +15,7 @@ class RobotController
 
 private:
 	Hamster& _hamster;
-	ConfigurationManager* _config;
+	ConfigurationManager& _config;
 	Map* _map;
 	OccupancyGrid _occupancygrid;
 	ParticlesManager* _particlesManager;
@@ -28,7 +28,7 @@ private:
 
 
 public:
-	RobotController(Hamster& hamster, ConfigurationManager* config);
+	RobotController(Hamster& hamster, ConfigurationManager& config);
 	void Start();
 };
 

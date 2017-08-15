@@ -52,10 +52,10 @@ bool WaypointManager::IsPathClear(Node * firstNode, Node * secondNode)
 {
 	bool isClear = true;
 
-	int xFirst = firstNode->location->X();
-	int xSecond = secondNode->location->X();
-	int yFirst = firstNode->location->Y();
-	int ySecond = secondNode->location->Y();
+	int xFirst = firstNode->location.X();
+	int xSecond = secondNode->location.X();
+	int yFirst = firstNode->location.Y();
+	int ySecond = secondNode->location.Y();
 	int distance = sqrt(pow(xFirst-xSecond,2) + pow(yFirst-ySecond,2));
 
 	if(distance > WAYPOINT_MAX_DISTANCE)
