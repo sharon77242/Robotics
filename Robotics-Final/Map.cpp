@@ -85,7 +85,7 @@ OccupancyGrid Map::CreateRotatedGrid(OccupancyGrid grid)
 			{
 				rotatedGrid.setCell(i, j, CELL_OCCUPIED);
 			}
-			else if (norm(color, WHITE, NORM_INF)==0)
+			else if (norm(color, WHITE, NORM_INF) == 0)
 			{
 				rotatedGrid.setCell(i, j, CELL_FREE);
 			}
@@ -95,7 +95,6 @@ OccupancyGrid Map::CreateRotatedGrid(OccupancyGrid grid)
 			}
 		}
 	}
-
 
 	return rotatedGrid;
 }
@@ -183,10 +182,11 @@ OccupancyGrid Map::convertToCoarseGrid(OccupancyGrid& grid)
 	return coarseGrid;
 }
 
-Mat* Map::GetInflatedMatrix()
-{
-	return CopyToMat(_inflatedOccupancyGrid);
-}
+// TODO : delete this
+//Mat* Map::GetInflatedMatrix()
+//{
+//	return CopyToMat(_inflatedOccupancyGrid);
+//}
 
 const OccupancyGrid& Map::GetRotatedGrid(){
 	return _rotatedOccupancyGrid;
@@ -205,7 +205,7 @@ void Map::DrawParticles(vector<Particle *> particles)
 		int x = particles[i]->mPosition.X();
 		int y = particles[i]->mPosition.Y();
 
-		SetColorInMatrixArea(matrix, y, x, 1, RED);
+		SetColorInMatrixArea(matrix, y, x, 1, RED); // TODO : why sending 1
 	}
 
 	// Drawing the top 5 particles in green color
@@ -219,21 +219,22 @@ void Map::DrawParticles(vector<Particle *> particles)
 	ShowMap(PARTICLES_VIEW, matrix);
 }
 
-Mat *Map::CopyToMat(const OccupancyGrid& ogrid)
-{
-	int width = ogrid.getWidth();
-	int height = ogrid.getHeight();
-	Mat *inflatedMatrix = new Mat(width, height, CV_8UC1);
-
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			SetCellColorInMatrix(*inflatedMatrix, i, j, ogrid.getCell(i, j));
-		}
-	}
-	return inflatedMatrix;
-}
+// TODO : delete this
+//Mat *Map::CopyToMat(const OccupancyGrid& ogrid)
+//{
+//	int width = ogrid.getWidth();
+//	int height = ogrid.getHeight();
+//	Mat *inflatedMatrix = new Mat(width, height, CV_8UC1);
+//
+//	for (int i = 0; i < height; ++i)
+//	{
+//		for (int j = 0; j < width; ++j)
+//		{
+//			SetCellColorInMatrix(*inflatedMatrix, i, j, ogrid.getCell(i, j));
+//		}
+//	}
+//	return inflatedMatrix;
+//}
 
 HamsterAPI::Cell Map::GetGridCell(int x, int y) const
 {
@@ -245,10 +246,11 @@ bool Map::IsInflatedOccupied(int x, int y)
 	return _inflatedOccupancyGrid.getCell(y, x) == CELL_OCCUPIED;
 }
 
-bool Map::IsOccupiedInOriginalMap(int x, int y)
-{
-	return _originalOccupancyGrid.getCell(y, x) == CELL_OCCUPIED;
-}
+// TODO : delete this
+//bool Map::IsOccupiedInOriginalMap(int x, int y)
+//{
+//	return _originalOccupancyGrid.getCell(y, x) == CELL_OCCUPIED;
+//}
 
 void Map::SetCellColorInMatrix(Mat &matrix, int row, int col, Cell cell)
 {
@@ -296,19 +298,21 @@ void Map::DrawPath(vector<Node *> nodes)
 {
 	static const string PATH_MAP_VIEW ("Path-View");
 	Mat mat = ConvertGridToMatrix(_inflatedOccupancyGrid);
-	for (unsigned int i = 0; i < nodes.size(); i++)
+	for (unsigned int i = 0; i < nodes.size(); ++i)
 	{
 		Position p = nodes[i]->location;
 		SetColorInMatrixArea(mat, p.Y(), p.X(), _cubePaddingSize,
 							_nodeTypeColor[nodes[i]->type]);
 	}
 
-	if(nodes.size()!=0){
-	Position start = nodes[0]->location;
-	SetColorInMatrixArea(mat, start.Y(), start.X(), _cubePaddingSize, BLUE);
+	if(nodes.size() != 0)
+	{
 
-	Position end = nodes[nodes.size() - 1]->location;
-	SetColorInMatrixArea(mat, end.Y(), end.X(), _cubePaddingSize, GREEN);
+		Position start = nodes[0]->location;
+		SetColorInMatrixArea(mat, start.Y(), start.X(), _cubePaddingSize, BLUE);
+
+		Position end = nodes[nodes.size() - 1]->location;
+		SetColorInMatrixArea(mat, end.Y(), end.X(), _cubePaddingSize, GREEN);
 	}
 
 	ShowMap(PATH_MAP_VIEW, mat);
