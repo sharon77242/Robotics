@@ -9,14 +9,14 @@
 class WaypointManager
 {
 public:
-	WaypointManager(Map* map);
-	std::vector<Node*> OptimizePath(std::vector<Node*> path);
+	WaypointManager(const HamsterAPI::OccupancyGrid& inflatedGrid);
+	std::vector<Node*> GetWaypoints(std::vector<Node*> path);
 
 private:
-	bool IsPathClear(Node * firstNode, Node * secondNode);
-	bool isLineClear(int ySecond, int yFirst, int xSecond, int xFirst, int smallX, int bigX);
+	int getNextWaypoint(vector<Node*> path, int startNodeIndex);
+	bool raytraceWillCollide(Node* start, Node* end);
 
-	Map *map_;
+	const HamsterAPI::OccupancyGrid inflatedGrid_;
 };
 
 #endif /* WAYPOINTMANAGER_H_ */

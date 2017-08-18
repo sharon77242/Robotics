@@ -41,11 +41,17 @@ vector<Node*> WaypointManager::GetWaypoints(vector<Node*> path)
 
 int WaypointManager::getNextWaypoint(vector<Node*> path, int startNodeIndex)
 {
+<<<<<<< HEAD
+	bool isClear = true;
+	float shipua = (float) ((ySecond - yFirst)) / (xSecond - xFirst);
+	for (double i = smallX; (i < bigX && isClear); i += 0.6)
+=======
 	int nextWaypoint = -1;
 	Node* targetNode;
 	Node* startNode = path[startNodeIndex];
 
 	for (unsigned int i = startNodeIndex; i < path.size() - 1; i++)
+>>>>>>> 37c5d0c... New way to calculate waypoints (optional)
 	{
 		int targetNodeIndex = i + 1;
 		targetNode = path[targetNodeIndex];

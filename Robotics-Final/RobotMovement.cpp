@@ -46,31 +46,53 @@ bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster& hamster, Position p
 		_localizationManager->ResampleParticles(deltaX,deltaY, deltaYaw);
 		_map->DrawParticles(_localizationManager->GetParticles());
 
-		if (ObstaclesInFrontOfRobot(&ld)) {
-			if(turnAngle > 0)
+		if (ObstaclesInFrontOfRobot(&ld))
 			{
-				hamster.sendSpeed(-0.5, -10);
+				if (turnAngle > 0)
+				{
+					if (abs(turnAngle) < 180)
+						hamster.sendSpeed(0.5, -45.0);
+					else
+						hamster.sendSpeed(0.5, 45.0);
+				}
+				else
+				{
+					if (abs(turnAngle) < 180)
+						hamster.sendSpeed(0.5, 45.0);
+					else
+						hamster.sendSpeed(0.5, -45.0);
+				}
 			}
 			else
 			{
-				hamster.sendSpeed(-0.5, 10);
+				hamster.sendSpeed(1.0, turnAngle/4);
 			}
-		}
-		else if (ld.getDistance(180) < 0.6) {
-			if(turnAngle > 0)
-			{
-				hamster.sendSpeed(0.5, 45);
-			}
-			else
-			{
-				hamster.sendSpeed(0.5, -45);
-			}
-		}
-		else
-		{
-			hamster.sendSpeed(1.0, turnAngle/4);
-			sleep(0.1);
-		}
+//
+//		if (ObstaclesInFrontOfRobot(&ld)) {
+//			if(turnAngle > 0)
+//			{
+//				hamster.sendSpeed(-0.5, -10);
+//			}
+//			else
+//			{
+//				hamster.sendSpeed(-0.5, 10);
+//			}
+//		}
+//		else if (ld.getDistance(180) < 0.6) {
+//			if(turnAngle > 0)
+//			{
+//				hamster.sendSpeed(0.5, 45);
+//			}
+//			else
+//			{
+//				hamster.sendSpeed(0.5, -45);
+//			}
+//		}
+//		else
+//		{
+//			hamster.sendSpeed(1.0, turnAngle/4);
+//			sleep(0.1);
+//		}
 
 		// Print Location
 		PrintLocationOfRobot(hamster);

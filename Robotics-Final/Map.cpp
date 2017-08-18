@@ -111,7 +111,7 @@ OccupancyGrid Map::CreateInflatedGrid(const OccupancyGrid& ogrid, int cube_paddi
 			Cell currentCell = ogrid.getCell(row, col);
 
 			// Check if the cell is occupied
-			if (currentCell == CELL_OCCUPIED)
+			if (currentCell != CELL_FREE)
 			{
 				// Calculate the cells range to inflate
 				int maxX =
@@ -187,6 +187,11 @@ OccupancyGrid Map::convertToCoarseGrid(OccupancyGrid& grid)
 //{
 //	return CopyToMat(_inflatedOccupancyGrid);
 //}
+
+const OccupancyGrid& Map::GetInflatedGrid()
+{
+	return _inflatedOccupancyGrid;
+}
 
 const OccupancyGrid& Map::GetRotatedGrid(){
 	return _rotatedOccupancyGrid;

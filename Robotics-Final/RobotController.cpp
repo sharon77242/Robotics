@@ -17,7 +17,7 @@ RobotController::RobotController(Hamster& hamster, ConfigurationManager& config)
 			_map->ConevrtMapPositionToGlobalPosition(_config.GetStartLocation()),
 			MovementPose);
 
-	_waypointsManager = new WaypointManager(_map);
+	_waypointsManager = new WaypointManager(_map->GetInflatedGrid());
 }
 
 void RobotController::Start(){
@@ -57,7 +57,8 @@ vector<Node*> RobotController::CreateWayPoints(vector<Node*> path)
 		return vector<Node*>();
 	}
 
-	vector<Node*> waypoints = _waypointsManager->OptimizePath(path);
+	vector<Node*> waypoints = _waypointsManager->GetWaypoints(path);
+	cout << "waypoint size is: " << waypoints.size() << endl;
 
 	return waypoints;
 }

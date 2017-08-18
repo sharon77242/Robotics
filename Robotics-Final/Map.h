@@ -24,6 +24,7 @@ public:
 	Map(const OccupancyGrid& grid, double robot_size, float resolution);
 
 	//Mat* GetInflatedMatrix();
+	const OccupancyGrid& GetInflatedGrid();
 	const OccupancyGrid& GetRotatedGrid();
 
 	HamsterAPI::Cell GetGridCell(int x, int y)const;
