@@ -1,5 +1,5 @@
-#ifndef PARTICLESMANAGER_H_
-#define PARTICLESMANAGER_H_
+#ifndef LOCALIZATIONMANAGER_H_
+#define LOCALIZATIONMANAGER_H_
 
 #include <vector>
 #include <HamsterAPIClientCPP/Hamster.h>
@@ -17,16 +17,16 @@
 using namespace std;
 using namespace HamsterAPI;
 
-class ParticlesManager {
+class LocalizationManager {
 public:
-	ParticlesManager(Hamster& hamster, Map * map);
+	LocalizationManager(Hamster& hamster, Map * map);
 	void InitializeParticles(Position firstMapPos);
 	void ResampleParticles(double deltaX, double deltaY, double deltaYaw);
 	Position GetBestParticlePosition();
 
 	vector<Particle *> GetParticles() const;
 
-	virtual ~ParticlesManager();
+	virtual ~LocalizationManager();
 
 private:
 	vector<Particle *> _particlesVector;
@@ -51,4 +51,4 @@ private:
 
 };
 
-#endif /* PARTICLESMANAGER_H_ */
+#endif /* LOCALIZATIONMANAGER_H_ */

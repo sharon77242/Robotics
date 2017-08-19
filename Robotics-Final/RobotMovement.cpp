@@ -1,13 +1,13 @@
 #include "RobotMovement.h"
 
-RobotMovement::RobotMovement(Map * map, ParticlesManager * particlesManager, Position startPosition, MovementMode movementMode)
-	: _map(map), _particalesManager(particlesManager), _movementMode(movementMode){
+RobotMovement::RobotMovement(Map * map, LocalizationManager * localizationManager, Position startPosition, MovementMode movementMode)
+	: _map(map), _localizationManager(localizationManager), _movementMode(movementMode){
 
 	_lastPosition = new Position(startPosition.X(),
 								startPosition.Y(),
 								startPosition.Heading());
 
-	_particalesManager->InitializeParticles(_map->ConevrtGlobalPositionToMapPosition(startPosition));
+	_localizationManager->InitializeParticles(_map->ConevrtGlobalPositionToMapPosition(startPosition));
 }
 
 RobotMovement::~RobotMovement() {
@@ -43,8 +43,8 @@ bool RobotMovement::MoveRobotToWaypoint(HamsterAPI::Hamster& hamster, Position p
 		HamsterAPI::LidarScan ld = hamster.getLidarScan();
 
 		GetDelts(currentLocation, deltaX, deltaY, deltaYaw);
-		_particalesManager->ResampleParticles(deltaX,deltaY, deltaYaw);
-		_map->DrawParticles(_particalesManager->GetParticles());
+		_localizationManager->ResampleParticles(deltaX,deltaY, deltaYaw);
+		_map->DrawParticles(_localizationManager->GetParticles());
 
 		if (ObstaclesInFrontOfRobot(&ld)) {
 			if(turnAngle > 0)
@@ -157,7 +157,7 @@ Position RobotMovement::GetCurrentPosition (Hamster& hamster){
 
 	if(_movementMode == MovementParticles)
 	{
-		return _particalesManager->GetBestParticlePosition();
+		return _localizationManager->GetBestParticlePosition();
 	}
 	else
 	{

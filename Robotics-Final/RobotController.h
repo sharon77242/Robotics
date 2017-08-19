@@ -18,7 +18,7 @@ private:
 	ConfigurationManager& _config;
 	Map* _map;
 	OccupancyGrid _occupancygrid;
-	ParticlesManager* _particlesManager;
+	LocalizationManager* _particlesManager;
 	RobotMovement* _robotMovement;
 	WaypointManager* _waypointsManager;
 

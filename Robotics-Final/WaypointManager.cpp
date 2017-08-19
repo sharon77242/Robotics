@@ -49,7 +49,7 @@ bool WaypointManager::isLineClear(int ySecond, int yFirst, int xSecond,
 {
 	bool isClear = true;
 	float shipua = (float) ((ySecond - yFirst)) / (xSecond - xFirst);
-	for (double i = smallX; (i < bigX && isClear); i += 0.2)
+	for (double i = smallX; (i < bigX && isClear); i += 0.6)
 	{
 		int y = ((float) (shipua) * i) - ((float) (shipua) * xFirst) + yFirst;
 		if (map_->IsInflatedOccupied(i, y))

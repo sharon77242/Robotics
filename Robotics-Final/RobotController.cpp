@@ -9,7 +9,7 @@ RobotController::RobotController(Hamster& hamster, ConfigurationManager& config)
 
 	_map = new Map(_occupancygrid, _config.GetRobotSize(), _occupancygrid.getResolution());
 
-	_particlesManager = new ParticlesManager(hamster, _map);
+	_particlesManager = new LocalizationManager(hamster, _map);
 
 	_robotMovement = new RobotMovement(
 			_map,

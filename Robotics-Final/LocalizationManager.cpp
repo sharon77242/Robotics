@@ -1,11 +1,11 @@
-#include "ParticlesManager.h"
+#include "LocalizationManager.h"
 using namespace std;
 
-ParticlesManager::ParticlesManager(Hamster& hamster, Map *map) : _hamster(hamster), _map(map)
+LocalizationManager::LocalizationManager(Hamster& hamster, Map *map) : _hamster(hamster), _map(map)
 {
 }
 
-void ParticlesManager::InitializeParticles(Position firstMapPos)
+void LocalizationManager::InitializeParticles(Position firstMapPos)
 {
 	_particlesVector.resize(NUM_OF_PARTICLES);
 
@@ -15,7 +15,7 @@ void ParticlesManager::InitializeParticles(Position firstMapPos)
 		SetToRandomCloseToPoint(_particlesVector[i], firstMapPos);
 	}
 }
-Position ParticlesManager::GetRandomCellFreePosition(Position* nearPosition, float yaw){
+Position LocalizationManager::GetRandomCellFreePosition(Position* nearPosition, float yaw){
 
 	int row, col, angle, radius;
 
@@ -39,7 +39,7 @@ Position ParticlesManager::GetRandomCellFreePosition(Position* nearPosition, flo
 	return Position(col, row, yaw);
 
 }
-void ParticlesManager::SetToRandomLocation(Particle *particle, float beliefYaw)
+void LocalizationManager::SetToRandomLocation(Particle *particle, float beliefYaw)
 {
 	float randYaw = rand() % 360;
 
@@ -47,20 +47,14 @@ void ParticlesManager::SetToRandomLocation(Particle *particle, float beliefYaw)
 	particle->gPosition = _map->ConevrtMapPositionToGlobalPosition(particle->mPosition);
 }
 
-void ParticlesManager::SetToRandomCloseToPoint(Particle *particle, Position firstPosition)
+void LocalizationManager::SetToRandomCloseToPoint(Particle *particle, Position firstPosition)
 {
-	//range of 15 degrees
-	float randYaw = rand() % (30 + 1) + firstPosition.Heading() - 15;
-	if (randYaw < 0)
-		randYaw += 360;
-	else if (randYaw > 360)
-	{
-		randYaw -= 360;
-	}
+	float randYaw = rand() % 360;
+
 	particle->mPosition = GetRandomCellFreePosition(&firstPosition, randYaw);//new Position(col, row, randYaw);
 	particle->gPosition = _map->ConevrtMapPositionToGlobalPosition(particle->mPosition);
 }
-double ParticlesManager::CalculateBelief(Particle *particle, double deltaX, double deltaY, double deltaYaw)
+double LocalizationManager::CalculateBelief(Particle *particle, double deltaX, double deltaY, double deltaYaw)
 {
 	LidarScan ld = _hamster.getLidarScan();
 
@@ -93,13 +87,13 @@ double ParticlesManager::CalculateBelief(Particle *particle, double deltaX, doub
 	return getNextBelief(particle, misses, matches, deltaX, deltaY, deltaYaw);
 }
 
-double ParticlesManager::getNextBelief (Particle *particle, int misses, int matches, double deltaX, double deltaY, double deltaYaw)
+double LocalizationManager::getNextBelief (Particle *particle, int misses, int matches, double deltaX, double deltaY, double deltaYaw)
 {
 	double newBelief = ((float)matches / (matches + misses)) * (1 - fabs(deltaX) - fabs(deltaY) - (deltaYaw / 36000));
 	return (particle->belief + newBelief) / 2;
 }
 
-void ParticlesManager::ResampleParticles(double deltaX, double deltaY, double deltaYaw)
+void LocalizationManager::ResampleParticles(double deltaX, double deltaY, double deltaYaw)
 {
 	for (size_t i = 0; i < _particlesVector.size(); ++i)
 	{
@@ -141,7 +135,7 @@ int GetWeightedRandomIndex(const vector<Particle *> &arr, int startIndex, int en
 	return 0;
 }
 
-void ParticlesManager::EnhanceParticles()
+void LocalizationManager::EnhanceParticles()
 {
 
 	std::sort(this->_particlesVector.begin(), this->_particlesVector.end(), biggerBeliefComparator);
@@ -159,17 +153,17 @@ void ParticlesManager::EnhanceParticles()
 	}
 }
 
-vector<Particle *> ParticlesManager::GetParticles() const
+vector<Particle *> LocalizationManager::GetParticles() const
 {
 	return _particlesVector;
 }
 
-Position ParticlesManager::GetBestParticlePosition()
+Position LocalizationManager::GetBestParticlePosition()
 {
 	std::sort(this->_particlesVector.begin(), this->_particlesVector.end(), biggerBeliefComparator);
 	return this->_particlesVector[0]->gPosition;
 }
 
-ParticlesManager::~ParticlesManager()
+LocalizationManager::~LocalizationManager()
 {
 }

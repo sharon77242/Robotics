@@ -5,7 +5,8 @@
 #include "Map.h"
 #include <math.h>
 #include <HamsterAPIClientCPP/Hamster.h>
-#include "ParticlesManager.h"
+
+#include "LocalizationManager.h"
 
 using HamsterAPI::OccupancyGrid;
 using namespace HamsterAPI;
@@ -23,7 +24,7 @@ enum MovementMode {
 class RobotMovement {
 private:
 	Map * _map;
-	ParticlesManager * _particalesManager;
+	LocalizationManager * _localizationManager;
 	Position * _lastPosition;
 	MovementMode _movementMode;
 	void GetDelts(Position currentLocation, double & deltaXInPixel, double & deltaYInPixel, double & deltaYawInDegree);
@@ -36,7 +37,7 @@ private:
 	Position GetCurrentPosition (Hamster& hamster);
 
 public:
-	RobotMovement(Map * map, ParticlesManager * particlesManager, Position startPosition, MovementMode movementMode);
+	RobotMovement(Map * map, LocalizationManager * localizationManager, Position startPosition, MovementMode movementMode);
 	virtual ~RobotMovement();
 	bool MoveRobotToWaypoint(HamsterAPI::Hamster& hamster, Position positionTarget);
 };
