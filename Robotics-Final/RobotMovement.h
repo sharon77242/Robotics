@@ -13,6 +13,7 @@ using namespace HamsterAPI;
 
 using namespace std;
 
+#define DISTANCE_FROM_WAYPOINT_TOLERANCE 5
 #define PI 3.14159265
 #define RANGE_THRESHOLD 0.4
 
